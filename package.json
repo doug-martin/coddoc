@@ -1,0 +1,27 @@
+{
+    "name": "coddoc",
+    "description": "Documentation generator",
+    "version": "0.0.1",
+    "keywords" : ["JSDOC", "Documentation", "docs", "doc", "markdown"],
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:Pollenware/coddoc.git"
+    },
+    "homepage": "http://pollenware.github.com/coddoc",
+    "author": "Doug Martin (http://pollenware.github.com)",
+    "main": "index.js",
+    "dependencies":{
+        "handlebars":">=1.0.5beta",
+        "commander":">=0.5.1"
+    },
+    "bin":{
+        "coddoc":"./bin/coddoc"
+    },
+    "directories": {
+        "lib": "lib",
+        "templates": "templates"
+    },
+    "engines": {
+        "node": ">= 0.6.1"
+    }
+}
