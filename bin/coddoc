@@ -1,51 +1,56 @@
 #!/usr/bin/env node
 
-var fs = require("fs"),
-    path = require("path"),
-    util = require("util"),
-    downdoc = require("../index.js"),
-    program = require('commander');
+(function () {
+    "use strict";
+    var fs = require("fs"),
+        path = require("path"),
+        util = require("util"),
+        downdoc = require("../index.js"),
+        program = require('commander');
 
 
-program
-    .version('0.0.1')
-    .option('-d, --directory <path>', 'Directory of js files')
-    .option('-f, --formatter <path>', 'Use built in formatter')
-    .option('-p, --pattern <string>', 'file pattern to use')
-    .on("formatters", function () {
-        console.log(["", "Reporters:", "\tmarkdown", "\thtml", ""].join("\n"));
+    program
+        .version('0.0.1')
+        .option('-d, --directory <path>', 'Directory of js files')
+        .option('-f, --formatter <path>', 'Use built in formatter')
+        .option('-p, --pattern <string>', 'file pattern to use')
+        .on("formatters", function () {
+            console.log(["", "Reporters:", "\tmarkdown", "\thtml", ""].join("\n"));
+            process.exit();
+        })
+        .parse(process.argv);
+
+    var directory = program.directory, formatter = program.formatter || null, pattern = program.pattern;
+
+    if (pattern) {
+        pattern = new RegExp(pattern);
+    }
+
+    if (!directory) {
+        process.stdout.write("Directory required\n");
+        process.stdout.write(program.helpInformation());
         process.exit();
-    })
-    .parse(process.argv);
-
-var directory = program.directory, formatter = program.formatter || null, pattern = program.pattern;
-
-if(pattern){
- pattern = new RegExp(pattern);
-}
-
-if (!directory) {
-    process.stdout.write("Directory required\n");
-    process.stdout.write(program.helpInformation());
-    process.exit();
-} else {
-    driectory = path.resolve(process.cwd(), directory);
-}
-
-if (formatter) {
-    var ciFormatter = formatter.toLowerCase().trim();
-    if ("markdown" === ciFormatter || "html" === ciFormatter) {
-        formatter = require("../templates/" + ciFormatter);
     } else {
-        formatter = require(path.resolve(process.cwd(), program.formatter));
-    }
-}
-var res = downdoc({dir:directory, formatter:formatter, pattern : pattern});
-if (res) {
-    if(formatter){
-        console.log(res);
-    }else{
-        console.log(JSON.stringify(res, null, 2));
+        directory = path.resolve(process.cwd(), directory);
     }
 
-}
+    if (formatter) {
+        var ciFormatter = formatter.toLowerCase().trim();
+        if ("markdown" === ciFormatter || "html" === ciFormatter) {
+            formatter = require("../templates/" + ciFormatter);
+        } else {
+            formatter = require(path.resolve(process.cwd(), program.formatter));
+        }
+    }
+    var tree = downdoc({dir:directory, formatter:formatter, pattern:pattern});
+    if (tree) {
+        if (formatter) {
+            if (formatter && formatter.generate) {
+                console.log(formatter.generate(tree));
+            }
+        } else {
+            console.log(JSON.stringify(tree, null, 2));
+        }
+
+    }
+}());
