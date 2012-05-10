@@ -58,12 +58,14 @@
 
 <h2>Installation</h2>
 Locally
-
-<pre>npm install coddoc</pre>
-
+```javascript
+npm install coddoc
+```
 Globally
 
-<pre>npm install -g coddoc</pre>
+```javascript
+npm install -g coddoc
+```
 
 <h2>Usage</h2>
 Down doc does not currently create multi file docs instead will output to a single file. You may however implement
@@ -81,28 +83,29 @@ Command line options
 Examples
 
 JSON output
-<pre>
+```javascript
 coddoc -d ./lib > symbols.json
-</pre>
+```
 
 To use the markdown formatter
-<pre>
+```javascript
 coddoc -d ./lib -f markdown > README.md
-</pre>
+```
 
 To use the HTML formatter
-<pre>
+```javascript
 coddoc -d ./lib -f html > index.html
-</pre>
+```
 
 To use pragmatically
 
-<pre>
+```javascript
 var coddoc = require("coddoc");
-var tree = coddoc.parse({directory : __dirname + "/lib"});
+var tree = coddoc.parse({directory : __dirname + "/lib"
+```);
 var classes = tree.classes, namespaces = tree.namespaces;
 //do something
-</pre>
+}
 
 
 
@@ -157,7 +160,7 @@ Entry point for parsing code.
 
 
 ---
-*Defined parser/code.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Adds a handler for a particular code regular expression. Useful if you want to
@@ -243,18 +246,19 @@ it is defaulted to 0.
 
 ```javascript
 function (regexp,priority,parse){
-   if(util.isFunction(priority)){
-       parse = priority
+   if (util.isFunction(priority)) {
+       parse = priority;
        priority = 0;
    }
    handlers.push({
-       priority : priority,
+       priority:priority,
        match:function (str) {
            return regexp.exec(str);
        },
        parse:parse
    });
    handlers.sort(sortHandlers);
+       
 }
 ```
     
@@ -266,7 +270,7 @@ function (regexp,priority,parse){
 
 
 ---
-*Defined parser/tags.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Adds a new tag to be parsed. You can use this to add custom tags. <a href='#coddoc'>coddoc</a> will
@@ -332,6 +336,7 @@ function (tag,parse){
                return {tag:tag, props:{}};
            }};
    });
+       
 }
 ```
     
@@ -343,7 +348,7 @@ function (tag,parse){
 
 
 ---
-*Defined parser/tags.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Returns a regular expression that can be used to parse tags
@@ -365,6 +370,7 @@ Returns a regular expression that can be used to parse tags
 ```javascript
 function (){
    return new RegExp("@(" + Object.keys(tags).join("|") + ")");
+       
 }
 ```
     
@@ -376,7 +382,7 @@ function (){
 
 
 ---
-*Defined parser/index.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Parses a string of code into <a href='#coddoc_Symbol'>coddoc.Symbol</a>s. All processed symbols are added to the <a href='#coddoc_Tree'>coddoc.Tree</a>.
@@ -396,6 +402,8 @@ This method is not intended to be used directly by user code.
         
  * _context_  : the context which holds information about the current parsing job.
         
+ * _emitter_  : 
+        
      
      
 *Returns*
@@ -409,26 +417,26 @@ This method is not intended to be used directly by user code.
 *Source*
 
 ```javascript
-function (str,filepath,tree,context){
+function (str,filepath,tree,context,emitter){
    var l = str.length;
    var symbols = [];
    for (var i = 0; i &lt; l; i++) {
        var tags = [];
        var comment = "", c = str[i], startIndex = i, endIndex, ret = [];
        var startCIndex = str.indexOf("/**", i);
-       if (startCIndex != -1) {
+       if (startCIndex !== -1) {
            i = startCIndex + 2;
            var endCIndex = str.indexOf("*/", i);
-           if (endCIndex != -1) {
-               comment = str.substr(startCIndex + 2, endCIndex - (startCIndex + 2)).split("\n").map(
-                   function (str) {
-                       return str.replace(/^\s*\*\s?/, "")
-                   }).join("\n");
+           if (endCIndex !== -1) {
+               comment = str.substr(startCIndex + 2, endCIndex - (startCIndex + 2)).split("\n").map(joinAndReplace).join("\n");
+               emitter.emit("comment", comment);
                i = endCIndex + 1;
                //console.log(str.substr(startCIndex, endCIndex - startCIndex));
                //console.log(comment);
-               var sym = parseTags({comment:comment, start:startCIndex, end:endCIndex + 2}, str, filepath, context);
+               var res = parseTags({comment:comment, start:startCIndex, end:endCIndex + 2}, str, filepath, context),
+                   sym = res.symbol;
                symbols.push(sym);
+               emitter.emit("symbol", sym);
                var memberof = sym.memberof;
                if (!sym.ignore && !sym.lends) {
                    tree.addSymbol(sym);
@@ -439,6 +447,7 @@ function (str,filepath,tree,context){
        }
    }
    return {symbols:symbols, code:str};
+       
 }
 ```
     
@@ -450,7 +459,7 @@ function (str,filepath,tree,context){
 
 
 ---
-*Defined parser/code.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Uses Registered handlers to parse the next block of code from a code fragment. This function is
@@ -485,10 +494,13 @@ function (str,symbol,context){
            break;
        }
    }
-   symbol.codeObject = ret;
-   for (var i in ret) {
-       symbol[i] = ret[i];
+   if (ret) {
+       symbol.codeObject = ret;
+       Object.keys(ret).forEach(function (i) {
+           symbol[i] = ret[i];
+       });
    }
+       
 }
 ```
     
@@ -500,7 +512,7 @@ function (str,symbol,context){
 
 
 ---
-*Defined parser/tags.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Parses a tag and the coresponding comment using a matching tag handler. Each parsed tag
@@ -526,13 +538,13 @@ coddoc.parseTag("someTag", "@someTag props...", sym, src, index, context);
 *Arguments*
 
         
- * _tag_  : the tag name being parsed from the comment
-        
  * _comment_  : the comment fragment being parsed
         
  * _sym_  : the symbol that the comment corresponds to. The code object and values will have already been set.
         
  * _context_  : the currect context object. The context allows tags to set new scopes and namespaces.
+        
+ * _tag_ <code>String</code> : the tag name being parsed from the comment
         
      
      
@@ -542,13 +554,17 @@ coddoc.parseTag("someTag", "@someTag props...", sym, src, index, context);
 *Source*
 
 ```javascript
-function (tag,comment,sym,context){
-   var t = tags[tag];
-   if (t) {
-       t.parse(comment, sym, context)
-   } else {
-       throw new Error("Invalid tag " + tag);
+function (comment,sym,context){
+   var tag = comment.match(TAG_REGEXP), ret = {};
+   if (tag && tag.length === 2) {
+       var t = tags[tag[1]];
+       if (t) {
+           t.parse(comment, sym, context);
+       } else {
+           throw new Error("Invalid tag " + tag);
+       }
    }
+       
 }
 ```
     
@@ -597,7 +613,7 @@ The context should not be used directly by user code.
 
 ###Constructor
 
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
      
 
 
@@ -610,6 +626,7 @@ function (){
    this.nameSpaces = {global:[]};
    this.aliases = {};
    this.activateScope("global");
+       
 }
 ```
       
@@ -619,11 +636,11 @@ function (){
   
 <a name="coddoc_Context_prototype_activateScope"></a>
 ###activateScope
- _static_  function public
+ function public
 
 
 ---
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Activates a scope for.
@@ -651,6 +668,7 @@ Activates a scope for.
 function (name){
    this.activeScope = name;
    return this.addScope(name);
+       
 }
 ```
     
@@ -658,11 +676,11 @@ function (name){
   
 <a name="coddoc_Context_prototype_addNamespace"></a>
 ###addNamespace
- _static_  function public
+ function public
 
 
 ---
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Adds a namespace the the context object.
@@ -692,6 +710,7 @@ function (name){
        this.nameSpaces[name] = {};
    }
    return this.nameSpaces[name];
+       
 }
 ```
     
@@ -699,11 +718,11 @@ function (name){
   
 <a name="coddoc_Context_prototype_addScope"></a>
 ###addScope
- _static_  function public
+ function public
 
 
 ---
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Adds a scope to the context
@@ -734,6 +753,7 @@ function (name){
        this.scopes[name] = {};
    }
    return this.scopes[name];
+       
 }
 ```
     
@@ -741,11 +761,11 @@ function (name){
   
 <a name="coddoc_Context_prototype_getActiveScope"></a>
 ###getActiveScope
- _static_  function public
+ function public
 
 
 ---
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Returns the active scope.
@@ -767,6 +787,7 @@ Returns the active scope.
 ```javascript
 function (){
    return this.getScope(this.activeScope);
+       
 }
 ```
     
@@ -774,11 +795,11 @@ function (){
   
 <a name="coddoc_Context_prototype_getActiveScopeName"></a>
 ###getActiveScopeName
- _static_  function public
+ function public
 
 
 ---
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Returns the name of the active scope.
@@ -800,6 +821,7 @@ Returns the name of the active scope.
 ```javascript
 function (){
    return this.activeScope;
+       
 }
 ```
     
@@ -807,11 +829,11 @@ function (){
   
 <a name="coddoc_Context_prototype_getNamespace"></a>
 ###getNamespace
- _static_  function public
+ function public
 
 
 ---
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Gets a namespace, creating it if it does not exist.
@@ -839,6 +861,7 @@ Gets a namespace, creating it if it does not exist.
 ```javascript
 function (name){
    return this.addNamespace(name);
+       
 }
 ```
     
@@ -846,11 +869,11 @@ function (name){
   
 <a name="coddoc_Context_prototype_getScope"></a>
 ###getScope
- _static_  function public
+ function public
 
 
 ---
-*Defined context.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Gets a scope creating it if it does not exist.
@@ -878,6 +901,7 @@ Gets a scope creating it if it does not exist.
 ```javascript
 function (name){
    return this.addScope(name);
+       
 }
 ```
     
@@ -906,69 +930,71 @@ added to the <a href='#coddoc_Tree'>coddoc.Tree</a> which is either returned fro
 
 
 *Instance Properties*
-<table class='table table-bordered table-striped'><tr><td>Property</td><td>Type</td><td>Default Value</td><td>Description</td></tr><tr><td><em>augments</em></td><td>{Array}</td><td><code>
+<table class='table table-bordered table-striped'><tr><td>Property</td><td>Type</td><td>Default Value</td><td>Description</td></tr><tr><td>augments</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Any symbols this symbol augments
-</td><tr><tr><td><em>borrows</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>borrows</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Any properties this symbol borrows
-</td><tr><tr><td><em>codeObject</em></td><td>{Object}</td><td><code>null</code></td><td>
+</td><tr><tr><td>codeObject</td><td>{Object}</td><td><code>null</code></td><td>
 The codeObject of this symbol
-</td><tr><tr><td><em>description</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>description</td><td>{String}</td><td><code>""</code></td><td>
 The description of this symbol.
-</td><tr><tr><td><em>examples</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>examples</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The examples for this symbol
-</td><tr><tr><td><em>file</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>file</td><td>{String}</td><td><code>""</code></td><td>
 The file where the symbol was found.
-</td><tr><tr><td><em>fullname</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>fullname</td><td>{String}</td><td><code>""</code></td><td>
 The fullname i.e ({memberof}.{name})
-</td><tr><tr><td><em>ignoreCode</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>ignore</td><td>{Boolean}</td><td><code>false</code></td><td>
+Set to true if the symbol should be ignored and not put into <a href='#coddoc_Tree'>coddoc.Tree</a>
+</td><tr><tr><td>ignoreCode</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if the code object from this symbol should be ignored.
-</td><tr><tr><td><em>isConstant</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isConstant</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is a constant.
-</td><tr><tr><td><em>isConstructor</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isConstructor</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true is this symbol is a constructor
-</td><tr><tr><td><em>isFunction</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isFunction</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is a function.
-</td><tr><tr><td><em>isPrivate</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isPrivate</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is private.
-</td><tr><tr><td><em>isProtected</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isProtected</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is protected.
-</td><tr><tr><td><em>isStatic</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isStatic</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is static
-</td><tr><tr><td><em>memberof</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>memberof</td><td>{String}</td><td><code>""</code></td><td>
 Who this symbol belongs to.
-</td><tr><tr><td><em>name</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>name</td><td>{String}</td><td><code>""</code></td><td>
 The name of this symbol
-</td><tr><tr><td><em>params</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>params</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The associated params for this symbol if it is a funciton.
-</td><tr><tr><td><em>properties</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>properties</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The associated properties for this symbol
-</td><tr><tr><td><em>returns</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>returns</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Array of return types for this symbol
-</td><tr><tr><td><em>see</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>see</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Any link for this symbol
-</td><tr><tr><td><em>tags</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>tags</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The associated tags for this symbol
-</td><tr><tr><td><em>throws</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>throws</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Exceptions thrown by this symbol
-</td><tr><tr><td><em>type</em></td><td>{*}</td><td><code>null</code></td><td>
+</td><tr><tr><td>type</td><td>{*}</td><td><code>null</code></td><td>
 The type that is symbol represents.
 </td><tr></table>
 
@@ -978,7 +1004,7 @@ The type that is symbol represents.
 
 ###Constructor
 
-*Defined symbol.js* [Top](#top)
+*Defined * [Top](#top)
      
 *Arguments*
 
@@ -1004,8 +1030,11 @@ function (options){
    this.returns = [];
    options = options || {};
    for (var i in options) {
-       this[i] = options[i];
+       if (this.hasOwnProperty(i)) {
+           this[i] = options[i];
+       }
    }
+       
 }
 ```
       
@@ -1053,7 +1082,7 @@ A Tree object which contains symbols.
 
 ###Constructor
 
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
      
 
 
@@ -1063,6 +1092,7 @@ A Tree object which contains symbols.
 ```javascript
 function (){
    this.symbols = {global:[]};
+       
 }
 ```
       
@@ -1072,11 +1102,11 @@ function (){
   
 <a name="coddoc_Tree_prototype__addSymbol"></a>
 ###_addSymbol
- _static_  function __private__
+ function __private__
 
 
 ---
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Adds a symbol to this tree.
@@ -1107,6 +1137,7 @@ function (name){
        ret = this.symbols[name] = [];
    }
    return ret;
+       
 }
 ```
     
@@ -1114,11 +1145,11 @@ function (name){
   
 <a name="coddoc_Tree_prototype_addSymbol"></a>
 ###addSymbol
- _static_  function public
+ function public
 
 
 ---
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Entry point to add the symbol
@@ -1145,10 +1176,14 @@ Entry point to add the symbol
 
 ```javascript
 function (symbol){
-   var path = symbol.memberof, name = symbol.name;
-   path == "global" && (path = name);
+   var nameParts = utils.splitName(symbol.fullName);
+   var path = nameParts.memberof, name = nameParts.name;
+   if (path === "global") {
+       path = name;
+   }
    var sym = this.getSymbol(path);
    sym.push(symbol);
+       
 }
 ```
     
@@ -1156,11 +1191,11 @@ function (symbol){
   
 <a name="coddoc_Tree_prototype_getClasses"></a>
 ###getClasses
- _static_  function public
+ function public
 
 
 ---
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Returns all classes in the tree. The following properties are added to each class symbol.
@@ -1200,7 +1235,7 @@ function (){
        var name = s.fullName;
        var statics = symbols[name] || [];
        var instance = symbols[name + ".prototype"] || [];
-       var borrowedMethods = [], borrowedProperties = [], staticBorrowedMethods = [], staticBorrowedProperties = []
+       var borrowedMethods = [], borrowedProperties = [], staticBorrowedMethods = [], staticBorrowedProperties = [];
        s.borrows.map(function (b) {
            var borrows = b.borrows;
            var symbol = symbols[borrows.memberof || "global"].filter(function (s) {
@@ -1233,7 +1268,6 @@ function (){
        s.staticProperties = statics.filter(
            function (s) {
                return !s.isFunction && !s.isNamespace;
-               ;
            }).concat(staticBorrowedProperties);
        s.instanceMethods = instance.filter(
            function (s) {
@@ -1245,6 +1279,7 @@ function (){
            }).concat(s.properties || []).concat(borrowedProperties);
        return s;
    });
+       
 }
 ```
     
@@ -1252,11 +1287,11 @@ function (){
   
 <a name="coddoc_Tree_prototype_getMembers"></a>
 ###getMembers
- _static_  function public
+ function public
 
 
 ---
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Gets all members(<a href='#coddoc_Symbol'>coddoc.Symbol</a>) for a particular path.
@@ -1291,6 +1326,7 @@ function (path){
        }));
    });
    return namespaces;
+       
 }
 ```
     
@@ -1298,11 +1334,11 @@ function (path){
   
 <a name="coddoc_Tree_prototype_getNamespaces"></a>
 ###getNamespaces
- _static_  function public
+ function public
 
 
 ---
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Returns all namespaces in this tree. This method also adds the following values to the namespace.
@@ -1337,17 +1373,18 @@ function (){
        }));
    });
    return namespaces.map(function (s) {
-       var realName = s.memberof && s.memberof != "global" ? [s.memberof, s.name].join(".") : s.name;
+       var realName = s.memberof && s.memberof !== "global" ? [s.memberof, s.name].join(".") : s.name;
        var members = this.getMembers(realName);
        s.name = realName;
-       s.properties = members.filter(function (m) {
+       s.properties = s.properties.concat(members.filter(function (m) {
            return !m.isFunction;
-       });
+       }));
        s.methods = members.filter(function (m) {
            return m.isFunction;
        });
        return s;
    }, this);
+       
 }
 ```
     
@@ -1355,11 +1392,11 @@ function (){
   
 <a name="coddoc_Tree_prototype_getSymbol"></a>
 ###getSymbol
- _static_  function public
+ function public
 
 
 ---
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Returns a symbol from this tree. The Tree will create the symbol if it does not exist.
@@ -1387,6 +1424,7 @@ Returns a symbol from this tree. The Tree will create the symbol if it does not 
 ```javascript
 function (name){
    return this._addSymbol(name);
+       
 }
 ```
     
@@ -1394,11 +1432,11 @@ function (name){
   
 <a name="coddoc_Tree_prototype_hasSymbol"></a>
 ###hasSymbol
- _static_  function public
+ function public
 
 
 ---
-*Defined tree.js* [Top](#top)
+*Defined * [Top](#top)
 
 
 Returns true if this tree contains a symbol.
@@ -1427,6 +1465,7 @@ Returns true if this tree contains a symbol.
 function (name){
    var parts = name.split(".");
    return !!this.symbols[name];
+       
 }
 ```
     

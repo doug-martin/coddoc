@@ -17,6 +17,7 @@
             tree = new Tree();
         it.should("parse the file and gather all symbols", function () {
             parser.parse(file, "", tree, new Context(), emitter);
+            console.dir(tree);
             var classes = tree.getClasses(), namespaces = tree.getNamespaces();
             assert.lengthOf(classes, 1);
             assert.lengthOf(namespaces, 1);

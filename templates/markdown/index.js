@@ -11,6 +11,11 @@
     var compiledReadmeTemplate = Handlebars.compile(readmeTemplate);
 
 
+    var between = function (string, start, end) {
+
+    };
+
+
     var link = function (name, context) {
         return new Handlebars.SafeString(
             "#" + normalize(name)
@@ -53,8 +58,15 @@
 
 
     var replaceLinks = function (text) {
-        return text ? text.replace(/\{@link\s([^\}]*)\}/g, function (m, s) {
+        return replaceCode(text ? text.replace(/\{@link\s([^\}]*)\}/g, function (m, s) {
             return ["<a href='#", normalize(s), "'>", s, "</a>"].join("");
+        }) : "");
+    };
+
+
+    var replaceCode = function (text) {
+        return text ? text.replace(/\{@code\s([^\}]*)\}/g, function (m, s) {
+            return ["```javascript", s, "```"].join("\n");
         }) : "";
     };
 
@@ -80,7 +92,6 @@
                 var value = replaceLinks(p.code || p.defaultValue || "");
                 var type = p.type || "";
                 var description = replaceLinks(p.description) || "";
-
                 ret += ["<tr><td>", name , "</td><td>", type, "</td><td>", value ? "<code>" + value + "</code>" : "", "</td><td>", description, "</td><tr>"].join("");
             });
             ret += "</table>";

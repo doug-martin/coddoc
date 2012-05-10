@@ -23,7 +23,10 @@
 
         it.should("create a tagRegexp", function () {
             assert.deepEqual(tags.getTagRegexp().toString(),
-                "/@(augments|extends|lends|namespace|param|parameter|arg|argument|return|returns|memberof|memberOf|name|constructor|constructs|class|classdesc|example|see|private|protected|public|ignore|ignoreCode|method|function|field|type|default|throws|throw|exception|property|borrows|constant|const|desc|description|projectName|header|footer)/");
+                "/@(augments|extends|lends|namespace|param|parameter|arg|argument|return|returns|memberof|memberOf" +
+                    "|name|constructor|constructs|class|classdesc|example|see|private|protected|public|ignore|ignoreCode" +
+                    "|method|function|field|type|default|throws|throw|exception|property|borrows|constant|const|desc" +
+                    "|description|projectName|header|footer)/");
         });
 
         var parseTag = function (comment) {
@@ -476,7 +479,10 @@
             });
             it.should("add it to the tagRegExp", function () {
                 assert.deepEqual(tags.getTagRegexp().toString(),
-                    "/@(augments|extends|lends|namespace|param|parameter|arg|argument|return|returns|memberof|memberOf|name|constructor|constructs|class|classdesc|example|see|private|protected|public|ignore|ignoreCode|method|function|field|type|default|throws|throw|exception|property|borrows|constant|const|desc|description|projectName|header|footer|void|VOID|Void)/");
+                    "/@(augments|extends|lends|namespace|param|parameter|arg|argument|return|returns|memberof|memberOf" +
+                        "|name|constructor|constructs|class|classdesc|example|see|private|protected|public|ignore" +
+                        "|ignoreCode|method|function|field|type|default|throws|throw|exception|property|borrows|constant" +
+                        "|const|desc|description|projectName|header|footer|void|VOID|Void)/");
             });
             types.forEach(function (type) {
                 it.should("parse the " + type + " added tag", function () {

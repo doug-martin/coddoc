@@ -40,6 +40,23 @@
                 assert.equal(symbol.name, "strFunc");
             });
 
+            it.should("set isConstructor to false", function(){
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor to true if name does not begin with capital", function(){
+                var code = 'function StrFunc(str1, str2) {};';
+                parseCode(code);
+                assert.isTrue(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor to false if whole name is all caps", function(){
+                var code = 'function STR_FUNC(str1, str2) {};';
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
+            });
+
             it.should("parse params", function () {
                 parseCode(code);
                 assert.deepEqual(symbol.params, [
@@ -68,9 +85,27 @@
                 parseCode(code);
                 assert.equal(symbol.code, "function (str1,str2){\n   \n}");
             });
+
             it.should('parse name', function () {
                 parseCode(code);
                 assert.equal(symbol.name, "MyObject");
+            });
+
+            it.should("set isConstructor to true", function(){
+                parseCode(code);
+                assert.isTrue(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor to false if name does not begin with capital", function(){
+                var code = 'var myObject = function (str1, str2) {};';
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor to false if whole name is all caps", function(){
+                var code = 'var MY_OBJECT = function (str1, str2) {};';
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
             });
 
             it.should('parse params', function () {
@@ -104,6 +139,23 @@
             it.should('parse code', function () {
                 parseCode(code);
                 assert.equal(symbol.code, "function (str1,str2){\n   \n}");
+            });
+
+            it.should("set isConstructor to false", function(){
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor if name begins with a capital letter", function(){
+                var code = 'MyObject.prototype.TestFunction = function (str1, str2) {\n};';
+                parseCode(code);
+                assert.isTrue(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor to false if whole name is all caps", function(){
+                var code = 'MyObject.prototype.TEST_FUNCTION = function (str1, str2) {\n};';
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
             });
 
             it.should('parse params', function () {
@@ -253,6 +305,23 @@
             it.should('parse name', function () {
                 parseCode(code);
                 assert.equal(symbol.name, "testFunction");
+            });
+
+            it.should("set isConstructor to false", function(){
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor if name begins with a capital letter", function(){
+                var code = 'TestFunction:function (str1,str2) {\n    },';
+                parseCode(code);
+                assert.isTrue(symbol.isConstructor);
+            });
+
+            it.should("set isConstructor to false if whole name is all caps", function(){
+                var code = 'TEST_FUNCTION:function (str1,str2) {\n    },';
+                parseCode(code);
+                assert.isFalse(symbol.isConstructor);
             });
 
             it.should("set isPrivate to tue if name begins with _", function(){

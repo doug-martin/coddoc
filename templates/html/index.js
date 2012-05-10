@@ -33,16 +33,24 @@
 
 
     var replaceLinks = function (text) {
-        return text ? text.replace(/\{@link\s([^\}]*)\}/g, function (m, s) {
+        return replaceCode(text ? text.replace(/\{@link\s([^\}]*)\}/g, function (m, s) {
             return ["<a href='#", normalize(s), "'>", s, "</a>"].join("");
+        }) : "");
+    };
+
+
+    var replaceCode = function (text) {
+        return text ? text.replace(/\{@code\s([^\}]*)\}/g, function (m, s) {
+            return ["<pre class='prettyprint linenums lang-js'>", s, "</pre>"].join("\n");
         }) : "";
     };
 
     var formatParamName = function (name) {
         var ret = name.name;
         if (name.optional) {
-            if ("undefined" !== typeof name.defaultValue) {
-                ret = "[" + ret + "=" + name.defaultValue + "]";
+            var defaultValue = name.defaultValue;
+            if ("undefined" !== typeof defaultValue) {
+                ret = "[" + ret + "= <code>" + name.defaultValue + "</code>]";
             } else {
                 ret += "?";
             }
