@@ -11,10 +11,6 @@
     var compiledReadmeTemplate = Handlebars.compile(readmeTemplate);
 
 
-    var between = function (string, start, end) {
-
-    };
-
 
     var link = function (name, context) {
         return new Handlebars.SafeString(
@@ -56,17 +52,29 @@
         return"<code>" + types.join("|") + "</code>";
     };
 
+    var replaceToken = function (str, token, cb) {
+        var start = "{@" + token, startToken = "{", endToken = "}", index = str.indexOf(start);
+        while (index !== -1) {
+            var code = util.getTokensBetween(str.substr(index), startToken, endToken, true).join("");
+            str = str.replace(code, cb(code, str, index));
+            index = str.indexOf(start);
+        }
+        return str;
+    };
+
 
     var replaceLinks = function (text) {
-        return replaceCode(text ? text.replace(/\{@link\s([^\}]*)\}/g, function (m, s) {
-            return ["<a href='#", normalize(s), "'>", s, "</a>"].join("");
+        return replaceCode(text ? replaceToken(text, "link", function (link) {
+            link = link.replace(/^\{@link|\}$/g, "");
+            return ["<a href='#", normalize(link), "'>", link, "</a>"].join("");
         }) : "");
     };
 
 
     var replaceCode = function (text) {
-        return text ? text.replace(/\{@code\s([^\}]*)\}/g, function (m, s) {
-            return ["```javascript", s, "```"].join("\n");
+        return text ? replaceToken(text, "code", function (code) {
+            code = code.replace(/^\{@code|\}$/g, "");
+            return ["```javascript", code, "```"].join("\n");
         }) : "";
     };
 

@@ -163,7 +163,7 @@
 <h2> Description</h2>
 <p>
     coddoc is a jsdoc parsing library. Coddoc is different in that it is easily extensible by allowing users to
-    add tag and code parsers through the use of <a href='#coddoc_addTagHandler'>coddoc.addTagHandler</a> and <a href='#coddoc_addCodeHandler'>coddoc.addCodeHandler</a>.
+    add tag and code parsers through the use of <a href='# coddoc_addTagHandler'> coddoc.addTagHandler</a> and <a href='# coddoc_addCodeHandler'> coddoc.addCodeHandler</a>.
     coddoc also parses source code to be used in APIs.
 </p>
 
@@ -216,12 +216,12 @@
 <h2>Installation</h2>
 Locally
 <pre class='prettyprint linenums lang-js'>
-npm install coddoc
+ npm install coddoc
 </pre>
 Globally
 
 <pre class='prettyprint linenums lang-js'>
-npm install -g coddoc
+ npm install -g coddoc
 </pre>
 
 <h2>Usage</h2>
@@ -241,28 +241,29 @@ Examples
 
 JSON output
 <pre class='prettyprint linenums lang-js'>
-coddoc -d ./lib > symbols.json
+ coddoc -d ./lib > symbols.json
 </pre>
 
 To use the markdown formatter
 <pre class='prettyprint linenums lang-js'>
-coddoc -d ./lib -f markdown > README.md
+ coddoc -d ./lib -f markdown > README.md
 </pre>
 
 To use the HTML formatter
 <pre class='prettyprint linenums lang-js'>
-coddoc -d ./lib -f html > index.html
+ coddoc -d ./lib -f html > index.html
 </pre>
 
 To use pragmatically
 
 <pre class='prettyprint linenums lang-js'>
+
 var coddoc = require("coddoc");
-var tree = coddoc.parse({directory : __dirname + "/lib"
-</pre>);
+var tree = coddoc.parse({directory : __dirname + "/lib"});
 var classes = tree.classes, namespaces = tree.namespaces;
 //do something
-}
+
+</pre>
 
 
 
@@ -426,7 +427,7 @@ var doc = coddoc({directory : path.resolve(__dirname + &quot;lib&quot;), patter 
         <li> <em>[options.pattern= <code>/.+\.js$/i</code>]</em> <code>RegExp</code> : a regular expression to test files agains</li>
     
         <li> <em>options.formatter?</em> <code>Object</code> : And optional formatter to format the tree. The object must contain
-a <code>generate</code> method. See <a href='#coddoc_formatters_html'>coddoc.formatters.html</a></li>
+a <code>generate</code> method. See <a href='# coddoc_formatters_html'> coddoc.formatters.html</a></li>
     
      </ul>
 
@@ -560,7 +561,7 @@ addHandler(/^var *\w+ *= * (\w+(?:\.\w+)*) = *function/, 20, function (str, symb
         <li> <em>[priority= <code>0</code>]</em>  : the priority to give this code handler if not provided
 it is defaulted to 0.</li>
     
-        <li> <em>parse</em>  : a function that returns an object. The object will be set as the <code>codeObject</code> on the <a href='#coddoc_Symbol'>coddoc.Symbol</a>. The properties of the object will be added to the <a href='#coddoc_Symbol'>coddoc.Symbol</a> for processing later.</li>
+        <li> <em>parse</em>  : a function that returns an object. The object will be set as the <code>codeObject</code> on the <a href='# coddoc_Symbol'> coddoc.Symbol</a>. The properties of the object will be added to the <a href='# coddoc_Symbol'> coddoc.Symbol</a> for processing later.</li>
     
      </ul>
 
@@ -610,7 +611,7 @@ function (regexp,priority,parse){
 <em>Defined </em>
 
 <p>
-Adds a new tag to be parsed. You can use this to add custom tags. <a href='#coddoc'>coddoc</a> will
+Adds a new tag to be parsed. You can use this to add custom tags. <a href='# coddoc'> coddoc</a> will
 not do anything with the new tag by default, however you can add functionality to handle the
 new tag in the template.
 
@@ -746,7 +747,7 @@ function (){
 <em>Defined </em>
 
 <p>
-Parses a string of code into <a href='#coddoc_Symbol'>coddoc.Symbol</a>s. All processed symbols are added to the <a href='#coddoc_Tree'>coddoc.Tree</a>.
+Parses a string of code into <a href='# coddoc_Symbol'> coddoc.Symbol</a>s. All processed symbols are added to the <a href='# coddoc_Tree'> coddoc.Tree</a>.
 This method is not intended to be used directly by user code.
 
 </p>
@@ -838,7 +839,7 @@ function (str,filepath,tree,context,emitter){
 
 <p>
 Uses Registered handlers to parse the next block of code from a code fragment. This function is
-used by <a href='#coddoc_parse'>coddoc.parse</a> to parse code for comments.
+used by <a href='# coddoc_parse'> coddoc.parse</a> to parse code for comments.
 
 </p>
 
@@ -903,8 +904,8 @@ function (str,symbol,context){
 
 <p>
 Parses a tag and the coresponding comment using a matching tag handler. Each parsed tag
-could add a new property to the <a href='#coddoc_Symbol'>coddoc.Symbol</a>. The parsed tag will be added the the
-<a href='#coddoc_Symbol_prototype_tags'>coddoc.Symbol#tags</a> array.
+could add a new property to the <a href='# coddoc_Symbol'> coddoc.Symbol</a>. The parsed tag will be added the the
+<a href='# coddoc_Symbol_prototype_tags'> coddoc.Symbol#tags</a> array.
 
 </p>
 
@@ -1523,9 +1524,9 @@ function (name){
 
 
     <p>
-A Symbol represents a comment and code pair. Each code handler added through <a href='#coddoc_addCodeHandler'>coddoc.addCodeHandler</a> and
-tag handler added through <a href='#coddoc_addTagHandler'>coddoc.addTagHandler</a> adds/removes properties from a the symbol. Each symbol is
-added to the <a href='#coddoc_Tree'>coddoc.Tree</a> which is either returned from <a href='#coddoc'>coddoc</a> or passed into a template handler.
+A Symbol represents a comment and code pair. Each code handler added through <a href='# coddoc_addCodeHandler'> coddoc.addCodeHandler</a> and
+tag handler added through <a href='# coddoc_addTagHandler'> coddoc.addTagHandler</a> adds/removes properties from a the symbol. Each symbol is
+added to the <a href='# coddoc_Tree'> coddoc.Tree</a> which is either returned from <a href='# coddoc'> coddoc</a> or passed into a template handler.
 
 <b>NOTE: This object should not be instantiated by user code</b>
 
@@ -1560,7 +1561,7 @@ The file where the symbol was found.
 </td><tr><tr><td>fullname</td><td>{String}</td><td><code>""</code></td><td>
 The fullname i.e ({memberof}.{name})
 </td><tr><tr><td>ignore</td><td>{Boolean}</td><td><code>false</code></td><td>
-Set to true if the symbol should be ignored and not put into <a href='#coddoc_Tree'>coddoc.Tree</a>
+Set to true if the symbol should be ignored and not put into <a href='# coddoc_Tree'> coddoc.Tree</a>
 </td><tr><tr><td>ignoreCode</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if the code object from this symbol should be ignored.
 </td><tr><tr><td>isConstant</td><td>{Boolean}</td><td><code>false</code></td><td>
@@ -2049,7 +2050,7 @@ function (){
 <em>Defined </em>
 
 <p>
-Gets all members(<a href='#coddoc_Symbol'>coddoc.Symbol</a>) for a particular path.
+Gets all members(<a href='# coddoc_Symbol'> coddoc.Symbol</a>) for a particular path.
 </p>
 
 
