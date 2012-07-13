@@ -7,10 +7,16 @@
             <span class="icon-bar"></span>
           </a>
       {{#if projectName}}
-          <a href="#" class="brand">{{projectName}}</a>
+          <a href="./index.html" class="brand">{{projectName}}</a>
       {{/if}}
+      {{#if includeDocs.length}}
            <div class="nav-collapse">
       <ul class="nav nav-pills">
+      {{#each includeDocs}}
+                 <li><a href="{{resolveInclude location}}">{{docName}}</a></li>
+                 {{/each}}
+            {{/if}}
+
       {{#if namespaces.length}}
         <li class="dropdown">
            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
@@ -31,10 +37,12 @@
            </ul>
         </li>
        {{/if}}
-       {{#if github}}
-                 <a href="{{github}}" class="right">github</a>
-             {{/if}}
       </ul>
+      {{#if github}}
+      <ul class="nav pull-right">
+                  <li><a href="{{github}}" target="#github" class="pull-right">github</a></li>
+        </ul>
+        {{/if}}
       </div>
     </div>
   </div>

@@ -11,7 +11,6 @@
     var compiledReadmeTemplate = Handlebars.compile(readmeTemplate);
 
 
-
     var link = function (name, context) {
         return new Handlebars.SafeString(
             "#" + normalize(name)
@@ -56,8 +55,12 @@
         var start = "{@" + token, startToken = "{", endToken = "}", index = str.indexOf(start);
         while (index !== -1) {
             var code = util.getTokensBetween(str.substr(index), startToken, endToken, true).join("");
-            str = str.replace(code, cb(code, str, index));
-            index = str.indexOf(start);
+            if (new RegExp("\\" + endToken + "$").test(code)) {
+                str = str.replace(code, cb(code, str, index));
+                index = str.indexOf(start);
+            } else {
+                break;
+            }
         }
         return str;
     };

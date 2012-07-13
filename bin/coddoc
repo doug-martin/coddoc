@@ -11,6 +11,7 @@
 
     program
         .version('0.0.1')
+        .option('--dir <path>', 'Directory to put output in if formatter accepts it')
         .option('-d, --directory <path>', 'Directory of js files')
         .option('-f, --formatter <path>', 'Use built in formatter')
         .option('-p, --pattern <string>', 'file pattern to use')
@@ -36,7 +37,7 @@
 
     if (formatter) {
         var ciFormatter = formatter.toLowerCase().trim();
-        if ("markdown" === ciFormatter || "html" === ciFormatter) {
+        if ("markdown" === ciFormatter || "html" === ciFormatter || "multi-html" === ciFormatter) {
             formatter = require("../templates/" + ciFormatter);
         } else {
             formatter = require(path.resolve(process.cwd(), program.formatter));
@@ -46,7 +47,7 @@
     if (tree) {
         if (formatter) {
             if (formatter && formatter.generate) {
-                console.log(formatter.generate(tree));
+                console.log(formatter.generate(tree, program));
             }
         } else {
             console.log(JSON.stringify(tree, null, 2));

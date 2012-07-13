@@ -2,28 +2,72 @@
     "use strict";
     var Handlebars = require("handlebars"),
         util = require("../../lib/util.js"),
+        exec = require("child_process").exec,
         fs = require("fs"),
+        marked = require("marked"),
         path = require("path");
 
-
     var template = __dirname;
-    var readmeTemplate = fs.readFileSync(path.resolve(template, "./index.html"), "utf8");
-    var compiledReadmeTemplate = Handlebars.compile(readmeTemplate);
+    var compileIndexTmpl = Handlebars.compile(fs.readFileSync(path.resolve(template, "./index.html"), "utf8"));
+    var compileClassesTmpl = Handlebars.compile(fs.readFileSync(path.resolve(template, "./classes.tmpl"), "utf8"));
+    var compileNamespacesTmpl = Handlebars.compile(fs.readFileSync(path.resolve(template, "./namespaces.tmpl"), "utf8"));
+
+    var normalize = function (name, context) {
+        return util.resolveName(name, true).replace(/\./g, "_");
+    };
+
+    var getSymbolName = function (name) {
+        var parts = name.replace(/\#.*/, "").split("."), symbol, last = parts[parts.length - 1];
+        if (last.charAt(0).match(/[A-Z]/) && last.toUpperCase() !== last) {
+            symbol = parts.join(".");
+        } else {
+            if (parts.length === 1) {
+                symbol = parts.join(".");
+            } else {
+                parts.pop();
+                symbol = parts.join(".");
+            }
+        }
+        return normalize(symbol).trim();
+    };
+
+    var getAccessorName = function (name) {
+        var match = name.match(/#(.*)|\.prototype\.(.*)/), symbol;
+        if (match) {
+            symbol = match[1] || match[2];
+        } else {
+            var parts = name.split(".");
+            if (!(parts[parts.length - 1].charAt(0).match(/[A-Z]/) || parts.length === 1)) {
+                symbol = "." + parts.pop();
+            }
+        }
+        return symbol ? symbol.trim() : null;
+    };
 
 
     var link = function (name, context) {
+        name = name.replace(".prototype.", "#");
+        var symbol = "./" + getSymbolName(name).trim() + ".html", prop = getAccessorName(name);
         return new Handlebars.SafeString(
-            "#" + normalize(name)
+            prop ? symbol + "#" + prop : symbol
         );
     };
 
-    var normalize = function (name, context) {
-        return util.resolveName(name).replace(/\./g, "_");
+    var resolveInclude = function (location) {
+        var extname = path.extname(location), baseName = path.basename(location, extname), content;
+        if (extname === ".md") {
+            content = marked(fs.readFileSync(location,"utf8"));
+        } else {
+            content = fs.readFileSync(location, 'utf8');
+        }
+        return new Handlebars.SafeString(
+            "./" + baseName + ".html"
+        );
     };
 
 
     var escapeLink = function (name) {
-        return normalize(name.replace(/\./g, "_"));
+        return getAccessorName(name);
     };
 
 
@@ -49,7 +93,7 @@
     var replaceLinks = function (text) {
         return replaceCode(text ? replaceToken(text, "link", function (link) {
             link = link.replace(/^\{@link|\}$/g, "");
-            return ["<a href='#", normalize(link), "'>", link, "</a>"].join("");
+            return ["<a href='", ["./" + getSymbolName(link).trim() + ".html", getAccessorName(link)].join("#"), "'>", link, "</a>"].join("");
         }) : "");
     };
 
@@ -95,15 +139,20 @@
     var importFile = (function () {
         var compiledImports = {};
         return function (file, context, b) {
-            if (!file.match(/\.(tmpl|html|css|js)$/)) {
+            var fileContent;
+            if (!file.match(/\.(tmpl|md|html|css|js)$/)) {
                 file += ".tmpl";
+            } else if (path.extname(file) === ".md") {
+                fileContent = '{{{import "./header.html"}}}\n' + marked(fs.readFileSync(file, "utf8")).replace(/\<pre\>/ig, "<pre class='prettyprint linenums lang-js'>") + '\n{{{import "./footer.html"}}}';
             }
             try {
 
                 var filePath = path.resolve(template, file);
                 var tmpl = compiledImports[filePath];
                 if (!tmpl) {
-                    var fileContent = fs.readFileSync(filePath, "utf8");
+                    if (!fileContent) {
+                        fileContent = fs.readFileSync(filePath, "utf8");
+                    }
                     tmpl = compiledImports[filePath] = Handlebars.compile(fileContent);
                 }
                 return tmpl(this);
@@ -116,7 +165,7 @@
     var see = function (see) {
         var parts = see.split(/\s+/);
         if (parts.length) {
-            var sym = util.splitName(util.resolveName(parts[0]));
+            var sym = util.splitName(util.resolveName(parts[0], true));
         }
     };
 
@@ -129,6 +178,7 @@
     Handlebars.registerHelper("formatParamName", formatParamName);
     Handlebars.registerHelper("propertyTable", propertyTable);
     Handlebars.registerHelper("import", importFile);
+    Handlebars.registerHelper("resolveInclude", resolveInclude);
 
     var objComp = function (n1, n2) {
         return n1.name === n2.name ? 0 : n1.name < n2.name ? -1 : 1;
@@ -136,6 +186,7 @@
 
     exports.generate = function (tree, options) {
         var nameSpaces = tree.getNamespaces().sort(objComp);
+        var dir = path.resolve(process.cwd(), options.dir || "docs");
         nameSpaces.forEach(function (n) {
             n.methods.sort(objComp);
             n.properties.sort(objComp);
@@ -148,7 +199,31 @@
             c.staticProperties.sort(objComp);
             c.allMethods = c.instanceMethods.concat(c.staticMethods).sort(objComp);
         });
-        return compiledReadmeTemplate({namespaces:nameSpaces, headers:tree.getHeaders(), footers:tree.getFooters(), projectName:tree.getProjectName(), classes:classes});
+
+        var includedDocs = tree.getIncludedDocs();
+        includedDocs.forEach(function (id) {
+            id.location = path.resolve(options.directory, id.location);
+
+        });
+        var base = {namespaces:nameSpaces, includeDocs : includedDocs, headers:tree.getHeaders(), footers:tree.getFooters(), projectName:tree.getProjectName(), github:tree.getGitHub(), classes:classes};
+        fs.writeFileSync(path.resolve(dir, "index.html"), compileIndexTmpl(base));
+        nameSpaces.forEach(function (namespace) {
+            fs.writeFileSync(path.resolve(dir, normalize(namespace.name) + ".html"), compileNamespacesTmpl(util.merge({namespace:namespace}, base)));
+        });
+        classes.forEach(function (clazz) {
+            fs.writeFileSync(path.resolve(dir, normalize(clazz.name) + ".html"), compileClassesTmpl(util.merge({"class":clazz}, base)));
+        });
+        includedDocs.forEach(function(idFile){
+            fs.writeFileSync(path.resolve(dir, resolveInclude(idFile.location).toString()), importFile.call(base, idFile.location));
+        });
+        console.log("cp -r " + __dirname + "/assets " + path.resolve(dir, "assets"));
+        exec("cp -r " + __dirname + "/assets " + path.resolve(dir, "./"), function (err) {
+            if (err) {
+                console.log(err.stack);
+            }
+
+        });
+
     };
 
 })();
