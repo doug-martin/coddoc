@@ -5,10 +5,10 @@
     "keywords":["JSDOC", "Documentation", "docs", "doc", "markdown"],
     "repository":{
         "type":"git",
-        "url":"git@github.com:Pollenware/coddoc.git"
+        "url":"git@github.com:doug-martin/coddoc.git"
     },
-    "homepage":"http://pollenware.github.com/coddoc",
-    "author":"Doug Martin (http://pollenware.github.com)",
+    "homepage":"http://doug-martin.github.com/coddoc",
+    "author":"Doug Martin (http://blog.dougamartin.com)",
     "main":"index.js",
     "dependencies":{
         "handlebars":">=1.0.5beta",
