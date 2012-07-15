@@ -7,9 +7,9 @@
             <span class="icon-bar"></span>
           </a>
       {{#if projectName}}
-          <a href="#" class="brand">{{projectName}}</a>
+          <a href="./index.html" class="brand">{{projectName}}</a>
       {{/if}}
-           <div class="nav-collapse">
+      <div class="nav-collapse">
       <ul class="nav nav-pills">
       {{#if namespaces.length}}
         <li class="dropdown">
@@ -31,10 +31,12 @@
            </ul>
         </li>
        {{/if}}
-       {{#if github}}
-                 <a href="{{github}}" class="right">github</a>
-             {{/if}}
       </ul>
+      {{#if github}}
+      <ul class="nav pull-right">
+                  <li><a href="{{github}}" target="#github" class="pull-right">github</a></li>
+        </ul>
+        {{/if}}
       </div>
     </div>
   </div>

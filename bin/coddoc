@@ -16,7 +16,7 @@
         .option('-f, --formatter <path>', 'Use built in formatter')
         .option('-p, --pattern <string>', 'file pattern to use')
         .on("formatters", function () {
-            console.log(["", "Reporters:", "\tmarkdown", "\thtml", ""].join("\n"));
+            console.log(["", "Reporters:", "\tmarkdown", "\thtml", "\tmulti-html", ""].join("\n"));
             process.exit();
         })
         .parse(process.argv);
@@ -47,7 +47,10 @@
     if (tree) {
         if (formatter) {
             if (formatter && formatter.generate) {
-                console.log(formatter.generate(tree, program));
+                var result = formatter.generate(tree, program);
+                if(result){
+                    console.log(result);
+                }
             }
         } else {
             console.log(JSON.stringify(tree, null, 2));

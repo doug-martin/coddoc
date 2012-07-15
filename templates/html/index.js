@@ -148,7 +148,7 @@
             c.staticProperties.sort(objComp);
             c.allMethods = c.instanceMethods.concat(c.staticMethods).sort(objComp);
         });
-        return compiledReadmeTemplate({namespaces:nameSpaces, headers:tree.getHeaders(), footers:tree.getFooters(), projectName:tree.getProjectName(), classes:classes});
+        return compiledReadmeTemplate({namespaces:nameSpaces, headers:tree.getHeaders(), footers:tree.getFooters(), projectName:tree.getProjectName(), github:tree.getGitHub(), classes:classes});
     };
 
 })();

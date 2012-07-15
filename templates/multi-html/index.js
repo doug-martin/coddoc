@@ -46,17 +46,23 @@
 
 
     var link = function (name, context) {
-        name = name.replace(".prototype.", "#");
-        var symbol = "./" + getSymbolName(name).trim() + ".html", prop = getAccessorName(name);
-        return new Handlebars.SafeString(
-            prop ? symbol + "#" + prop : symbol
-        );
+        if (this.isNamespace) {
+            return new Handlebars.SafeString(
+                normalize(name) + ".html"
+            );
+        } else {
+            name = name.replace(".prototype.", "#");
+            var symbol = "./" + getSymbolName(name).trim() + ".html", prop = getAccessorName(name);
+            return new Handlebars.SafeString(
+                prop ? symbol + "#" + prop : symbol
+            );
+        }
     };
 
     var resolveInclude = function (location) {
         var extname = path.extname(location), baseName = path.basename(location, extname), content;
         if (extname === ".md") {
-            content = marked(fs.readFileSync(location,"utf8"));
+            content = marked(fs.readFileSync(location, "utf8"));
         } else {
             content = fs.readFileSync(location, 'utf8');
         }
@@ -205,7 +211,7 @@
             id.location = path.resolve(options.directory, id.location);
 
         });
-        var base = {namespaces:nameSpaces, includeDocs : includedDocs, headers:tree.getHeaders(), footers:tree.getFooters(), projectName:tree.getProjectName(), github:tree.getGitHub(), classes:classes};
+        var base = {namespaces:nameSpaces, includeDocs:includedDocs, headers:tree.getHeaders(), footers:tree.getFooters(), projectName:tree.getProjectName(), github:tree.getGitHub(), classes:classes};
         fs.writeFileSync(path.resolve(dir, "index.html"), compileIndexTmpl(base));
         nameSpaces.forEach(function (namespace) {
             fs.writeFileSync(path.resolve(dir, normalize(namespace.name) + ".html"), compileNamespacesTmpl(util.merge({namespace:namespace}, base)));
@@ -213,7 +219,7 @@
         classes.forEach(function (clazz) {
             fs.writeFileSync(path.resolve(dir, normalize(clazz.name) + ".html"), compileClassesTmpl(util.merge({"class":clazz}, base)));
         });
-        includedDocs.forEach(function(idFile){
+        includedDocs.forEach(function (idFile) {
             fs.writeFileSync(path.resolve(dir, resolveInclude(idFile.location).toString()), importFile.call(base, idFile.location));
         });
         console.log("cp -r " + __dirname + "/assets " + path.resolve(dir, "assets"));

@@ -119,9 +119,9 @@
             <span class="icon-bar"></span>
           </a>
       
-          <a href="#" class="brand">coddoc</a>
+          <a href="./index.html" class="brand">coddoc</a>
       
-           <div class="nav-collapse">
+      <div class="nav-collapse">
       <ul class="nav nav-pills">
       
         <li class="dropdown">
@@ -148,6 +148,11 @@
         </li>
        
       </ul>
+      
+      <ul class="nav pull-right">
+                  <li><a href="https://github.com/doug-martin/coddoc" target="#github" class="pull-right">github</a></li>
+        </ul>
+        
       </div>
     </div>
   </div>
@@ -163,7 +168,7 @@
 <h2> Description</h2>
 <p>
     coddoc is a jsdoc parsing library. Coddoc is different in that it is easily extensible by allowing users to
-    add tag and code parsers through the use of <a href='#coddoc_addTagHandler'>coddoc.addTagHandler</a> and <a href='#coddoc_addCodeHandler'>coddoc.addCodeHandler</a>.
+    add tag and code parsers through the use of <a href='#coddoc_addTagHandler'> coddoc.addTagHandler</a> and <a href='#coddoc_addCodeHandler'> coddoc.addCodeHandler</a>.
     coddoc also parses source code to be used in APIs.
 </p>
 
@@ -205,7 +210,19 @@
     Coddoc also has a few additional tags.
     <ul>
          <li>ignoreCode : ignore the parsed code in the output</li>
+         <li>includeDoc : include an external doc. External docs can be html or markdown.
+         Example <pre class='prettyprint linenums lang-js'>
+ &#64;includeDoc [Title Of Doc] ../location/of_doc.md
+</pre>
+         </li>
          <li>projectName : document the projectName</li>
+         <li>github : url to github project</li>
+         <li>code : specifies a code block without needing an <code>example</code> tag
+         Example <pre class='prettyprint linenums lang-js'>
+ &#123;&#64;code var test = "test"; &#125;
+</pre>
+         </li>
+
          <li>header : allows you to document a header that should appear before
          generated documentation</li>
          <li>footer : allows you to document a footer that should come after the generated documentation</li>
@@ -215,12 +232,14 @@
 
 <h2>Installation</h2>
 Locally
-
-<pre>npm install coddoc</pre>
-
+<pre class='prettyprint linenums lang-js'>
+ npm install coddoc
+</pre>
 Globally
 
-<pre>npm install -g coddoc</pre>
+<pre class='prettyprint linenums lang-js'>
+ npm install -g coddoc
+</pre>
 
 <h2>Usage</h2>
 Down doc does not currently create multi file docs instead will output to a single file. You may however implement
@@ -236,25 +255,31 @@ Command line options
 </ul>
 
 Examples
-<pre>
-coddoc -d ./lib > symbols.json
+
+JSON output
+<pre class='prettyprint linenums lang-js'>
+ coddoc -d ./lib > symbols.json
 </pre>
-To use the markdown formmater
-<pre>
-coddoc -d ./lib -f markdown > README.md
+
+To use the markdown formatter
+<pre class='prettyprint linenums lang-js'>
+ coddoc -d ./lib -f markdown > README.md
 </pre>
-<pre>
+
 To use the HTML formatter
-coddoc -d ./lib -f html > index.html
+<pre class='prettyprint linenums lang-js'>
+ coddoc -d ./lib -f html > index.html
 </pre>
 
 To use pragmatically
 
-<pre>
+<pre class='prettyprint linenums lang-js'>
+
 var coddoc = require("coddoc");
 var tree = coddoc.parse({directory : __dirname + "/lib"});
 var classes = tree.classes, namespaces = tree.namespaces;
 //do something
+
 </pre>
 
 
@@ -416,10 +441,10 @@ var doc = coddoc({directory : path.resolve(__dirname + &quot;lib&quot;), patter 
     
         <li> <em>options.dir</em> <code>String</code> : the directory of code to parse.</li>
     
-        <li> <em>[options.pattern=/.+\.js$/i]</em> <code>RegExp</code> : a regular expression to test files agains</li>
+        <li> <em>[options.pattern= <code>/.+\.js$/i</code>]</em> <code>RegExp</code> : a regular expression to test files agains</li>
     
         <li> <em>options.formatter?</em> <code>Object</code> : And optional formatter to format the tree. The object must contain
-a <code>generate</code> method. See <a href='#coddoc_formatters_html'>coddoc.formatters.html</a></li>
+a <code>generate</code> method. See <a href='#coddoc_formatters_html'> coddoc.formatters.html</a></li>
     
      </ul>
 
@@ -431,11 +456,10 @@ a <code>generate</code> method. See <a href='#coddoc_formatters_html'>coddoc.for
     <pre class="prettyprint linenums lang-js">
 function (options){
    options = options || {};
-   var baseDir = options.dir;
+   var baseDir = options.dir, filePattern = options.pattern || FILE_PATTERN;
    if (!baseDir) {
        console.log(&quot;directory required&quot;);
    }
-   var filePattern = options.pattern || FILE_PATTERN;
    var fileMap = {};
    (function findFiles(dir) {
        var files = fs.readdirSync(dir);
@@ -448,18 +472,15 @@ function (options){
                fileMap[filePath] = fs.readFileSync(filePath, &quot;utf8&quot;);
            }
        });
-   })(baseDir);
-   var context = new Context();
-   var tree = new Tree();
+   }(baseDir));
+   var context = new Context(), tree = new Tree();
    Object.keys(fileMap).forEach(function (i, j) {
-       context.activateScope(&quot;global&quot;)
-       parser.parse(fileMap[i], path.relative(baseDir, i), tree, context);
+       emitter.emit(&quot;file&quot;, i);
+       context.activateScope(&quot;global&quot;);
+       parser.parse(fileMap[i], path.relative(baseDir, i), tree, context, emitter);
    });
-   var formatter = options.formatter, ret = tree;
-   if (formatter &amp;&amp; formatter.generate) {
-       ret = formatter.generate(tree);
-   }
-   return ret;
+   return tree;
+       
 }
     </pre>
     
@@ -554,10 +575,10 @@ addHandler(/^var *\w+ *= * (\w+(?:\.\w+)*) = *function/, 20, function (str, symb
     
         <li> <em>regexp</em>  : the regular expression used to match code blocks.</li>
     
-        <li> <em>[priority=0]</em>  : the priority to give this code handler if not provided
+        <li> <em>[priority= <code>0</code>]</em>  : the priority to give this code handler if not provided
 it is defaulted to 0.</li>
     
-        <li> <em>parse</em>  : a function that returns an object. The object will be set as the <code>codeObject</code> on the <a href='#coddoc_Symbol'>coddoc.Symbol</a>. The properties of the object will be added to the <a href='#coddoc_Symbol'>coddoc.Symbol</a> for processing later.</li>
+        <li> <em>parse</em>  : a function that returns an object. The object will be set as the <code>codeObject</code> on the <a href='#coddoc_Symbol'> coddoc.Symbol</a>. The properties of the object will be added to the <a href='#coddoc_Symbol'> coddoc.Symbol</a> for processing later.</li>
     
      </ul>
 
@@ -568,18 +589,19 @@ it is defaulted to 0.</li>
     <em>Source</em>
     <pre class="prettyprint linenums lang-js">
 function (regexp,priority,parse){
-   if(util.isFunction(priority)){
-       parse = priority
+   if (util.isFunction(priority)) {
+       parse = priority;
        priority = 0;
    }
    handlers.push({
-       priority : priority,
+       priority:priority,
        match:function (str) {
            return regexp.exec(str);
        },
        parse:parse
    });
    handlers.sort(sortHandlers);
+       
 }
     </pre>
     
@@ -606,7 +628,7 @@ function (regexp,priority,parse){
 <em>Defined parser/tags.js</em>
 
 <p>
-Adds a new tag to be parsed. You can use this to add custom tags. <a href='#coddoc'>coddoc</a> will
+Adds a new tag to be parsed. You can use this to add custom tags. <a href='#coddoc'> coddoc</a> will
 not do anything with the new tag by default, however you can add functionality to handle the
 new tag in the template.
 
@@ -668,6 +690,7 @@ function (tag,parse){
                return {tag:tag, props:{}};
            }};
    });
+       
 }
     </pre>
     
@@ -714,6 +737,7 @@ Returns a regular expression that can be used to parse tags
     <pre class="prettyprint linenums lang-js">
 function (){
    return new RegExp(&quot;@(&quot; + Object.keys(tags).join(&quot;|&quot;) + &quot;)&quot;);
+       
 }
     </pre>
     
@@ -740,7 +764,7 @@ function (){
 <em>Defined parser/index.js</em>
 
 <p>
-Parses a string of code into <a href='#coddoc_Symbol'>coddoc.Symbol</a>s. All processed symbols are added to the <a href='#coddoc_Tree'>coddoc.Tree</a>.
+Parses a string of code into <a href='#coddoc_Symbol'> coddoc.Symbol</a>s. All processed symbols are added to the <a href='#coddoc_Tree'> coddoc.Tree</a>.
 This method is not intended to be used directly by user code.
 
 </p>
@@ -757,6 +781,8 @@ This method is not intended to be used directly by user code.
     
         <li> <em>context</em>  : the context which holds information about the current parsing job.</li>
     
+        <li> <em>emitter</em>  : </li>
+    
      </ul>
 
 
@@ -772,26 +798,26 @@ This method is not intended to be used directly by user code.
     
     <em>Source</em>
     <pre class="prettyprint linenums lang-js">
-function (str,filepath,tree,context){
+function (str,filepath,tree,context,emitter){
    var l = str.length;
    var symbols = [];
    for (var i = 0; i &lt; l; i++) {
        var tags = [];
        var comment = &quot;&quot;, c = str[i], startIndex = i, endIndex, ret = [];
        var startCIndex = str.indexOf(&quot;/**&quot;, i);
-       if (startCIndex != -1) {
+       if (startCIndex !== -1) {
            i = startCIndex + 2;
            var endCIndex = str.indexOf(&quot;*/&quot;, i);
-           if (endCIndex != -1) {
-               comment = str.substr(startCIndex + 2, endCIndex - (startCIndex + 2)).split(&quot;\n&quot;).map(
-                   function (str) {
-                       return str.replace(/^\s*\*\s?/, &quot;&quot;)
-                   }).join(&quot;\n&quot;);
+           if (endCIndex !== -1) {
+               comment = str.substr(startCIndex + 2, endCIndex - (startCIndex + 2)).split(&quot;\n&quot;).map(joinAndReplace).join(&quot;\n&quot;);
+               emitter.emit(&quot;comment&quot;, comment);
                i = endCIndex + 1;
                //console.log(str.substr(startCIndex, endCIndex - startCIndex));
                //console.log(comment);
-               var sym = parseTags({comment:comment, start:startCIndex, end:endCIndex + 2}, str, filepath, context);
+               var res = parseTags({comment:comment, start:startCIndex, end:endCIndex + 2}, str, filepath, context),
+                   sym = res.symbol;
                symbols.push(sym);
+               emitter.emit(&quot;symbol&quot;, sym);
                var memberof = sym.memberof;
                if (!sym.ignore &amp;&amp; !sym.lends) {
                    tree.addSymbol(sym);
@@ -802,6 +828,7 @@ function (str,filepath,tree,context){
        }
    }
    return {symbols:symbols, code:str};
+       
 }
     </pre>
     
@@ -829,7 +856,7 @@ function (str,filepath,tree,context){
 
 <p>
 Uses Registered handlers to parse the next block of code from a code fragment. This function is
-used by <a href='#coddoc_parse'>coddoc.parse</a> to parse code for comments.
+used by <a href='#coddoc_parse'> coddoc.parse</a> to parse code for comments.
 
 </p>
 
@@ -860,10 +887,13 @@ function (str,symbol,context){
            break;
        }
    }
-   symbol.codeObject = ret;
-   for (var i in ret) {
-       symbol[i] = ret[i];
+   if (ret) {
+       symbol.codeObject = ret;
+       Object.keys(ret).forEach(function (i) {
+           symbol[i] = ret[i];
+       });
    }
+       
 }
     </pre>
     
@@ -891,8 +921,8 @@ function (str,symbol,context){
 
 <p>
 Parses a tag and the coresponding comment using a matching tag handler. Each parsed tag
-could add a new property to the <a href='#coddoc_Symbol'>coddoc.Symbol</a>. The parsed tag will be added the the
-<a href='#coddoc_Symbol_prototype_tags'>coddoc.Symbol#tags</a> array.
+could add a new property to the <a href='#coddoc_Symbol'> coddoc.Symbol</a>. The parsed tag will be added the the
+<a href='#coddoc_Symbol_prototype_tags'> coddoc.Symbol#tags</a> array.
 
 </p>
 
@@ -912,13 +942,13 @@ coddoc.parseTag(&quot;someTag&quot;, &quot;@someTag props...&quot;, sym, src, in
     <em>Arguments</em>
     <ul>
     
-        <li> <em>tag</em>  : the tag name being parsed from the comment</li>
-    
         <li> <em>comment</em>  : the comment fragment being parsed</li>
     
         <li> <em>sym</em>  : the symbol that the comment corresponds to. The code object and values will have already been set.</li>
     
         <li> <em>context</em>  : the currect context object. The context allows tags to set new scopes and namespaces.</li>
+    
+        <li> <em>tag</em> <code>String</code> : the tag name being parsed from the comment</li>
     
      </ul>
 
@@ -928,13 +958,17 @@ coddoc.parseTag(&quot;someTag&quot;, &quot;@someTag props...&quot;, sym, src, in
     
     <em>Source</em>
     <pre class="prettyprint linenums lang-js">
-function (tag,comment,sym,context){
-   var t = tags[tag];
-   if (t) {
-       t.parse(comment, sym, context)
-   } else {
-       throw new Error(&quot;Invalid tag &quot; + tag);
+function (comment,sym,context){
+   var tag = comment.match(TAG_REGEXP), ret = {};
+   if (tag &amp;&amp; tag.length === 2) {
+       var t = tags[tag[1]];
+       if (t) {
+           t.parse(comment, sym, context);
+       } else {
+           throw new Error(&quot;Invalid tag &quot; + tag);
+       }
    }
+       
 }
     </pre>
     
@@ -975,8 +1009,6 @@ function (tag,comment,sym,context){
                                 
                                 <li><a href="#coddoc_Context_prototype_activateScope">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -990,8 +1022,6 @@ function (tag,comment,sym,context){
                                 </a></li>
                                 
                                 <li><a href="#coddoc_Context_prototype_addNamespace">
-                                
-                                <span class="label label-info">S</span>
                                 
                                 
                                 <span class="label label-label">F</span>
@@ -1007,8 +1037,6 @@ function (tag,comment,sym,context){
                                 
                                 <li><a href="#coddoc_Context_prototype_addScope">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -1022,8 +1050,6 @@ function (tag,comment,sym,context){
                                 </a></li>
                                 
                                 <li><a href="#coddoc_Context_prototype_getActiveScope">
-                                
-                                <span class="label label-info">S</span>
                                 
                                 
                                 <span class="label label-label">F</span>
@@ -1039,8 +1065,6 @@ function (tag,comment,sym,context){
                                 
                                 <li><a href="#coddoc_Context_prototype_getActiveScopeName">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -1055,8 +1079,6 @@ function (tag,comment,sym,context){
                                 
                                 <li><a href="#coddoc_Context_prototype_getNamespace">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -1070,8 +1092,6 @@ function (tag,comment,sym,context){
                                 </a></li>
                                 
                                 <li><a href="#coddoc_Context_prototype_getScope">
-                                
-                                <span class="label label-info">S</span>
                                 
                                 
                                 <span class="label label-label">F</span>
@@ -1123,6 +1143,7 @@ function (){
    this.nameSpaces = {global:[]};
    this.aliases = {};
    this.activateScope(&quot;global&quot;);
+       
 }
             </pre>
       
@@ -1133,8 +1154,6 @@ function (){
     <a name="coddoc_Context_prototype_activateScope"></a>
     <h3>
         activateScope
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1177,6 +1196,7 @@ Activates a scope for.
 function (name){
    this.activeScope = name;
    return this.addScope(name);
+       
 }
     </pre>
     
@@ -1186,8 +1206,6 @@ function (name){
     <a name="coddoc_Context_prototype_addNamespace"></a>
     <h3>
         addNamespace
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1232,6 +1250,7 @@ function (name){
        this.nameSpaces[name] = {};
    }
    return this.nameSpaces[name];
+       
 }
     </pre>
     
@@ -1241,8 +1260,6 @@ function (name){
     <a name="coddoc_Context_prototype_addScope"></a>
     <h3>
         addScope
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1288,6 +1305,7 @@ function (name){
        this.scopes[name] = {};
    }
    return this.scopes[name];
+       
 }
     </pre>
     
@@ -1297,8 +1315,6 @@ function (name){
     <a name="coddoc_Context_prototype_getActiveScope"></a>
     <h3>
         getActiveScope
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1334,6 +1350,7 @@ Returns the active scope.
     <pre class="prettyprint linenums lang-js">
 function (){
    return this.getScope(this.activeScope);
+       
 }
     </pre>
     
@@ -1343,8 +1360,6 @@ function (){
     <a name="coddoc_Context_prototype_getActiveScopeName"></a>
     <h3>
         getActiveScopeName
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1380,6 +1395,7 @@ Returns the name of the active scope.
     <pre class="prettyprint linenums lang-js">
 function (){
    return this.activeScope;
+       
 }
     </pre>
     
@@ -1389,8 +1405,6 @@ function (){
     <a name="coddoc_Context_prototype_getNamespace"></a>
     <h3>
         getNamespace
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1433,6 +1447,7 @@ Gets a namespace, creating it if it does not exist.
     <pre class="prettyprint linenums lang-js">
 function (name){
    return this.addNamespace(name);
+       
 }
     </pre>
     
@@ -1442,8 +1457,6 @@ function (name){
     <a name="coddoc_Context_prototype_getScope"></a>
     <h3>
         getScope
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1486,6 +1499,7 @@ Gets a scope creating it if it does not exist.
     <pre class="prettyprint linenums lang-js">
 function (name){
    return this.addScope(name);
+       
 }
     </pre>
     
@@ -1527,9 +1541,9 @@ function (name){
 
 
     <p>
-A Symbol represents a comment and code pair. Each code handler added through <a href='#coddoc_addCodeHandler'>coddoc.addCodeHandler</a> and
-tag handler added through <a href='#coddoc_addTagHandler'>coddoc.addTagHandler</a> adds/removes properties from a the symbol. Each symbol is
-added to the <a href='#coddoc_Tree'>coddoc.Tree</a> which is either returned from <a href='#coddoc'>coddoc</a> or passed into a template handler.
+A Symbol represents a comment and code pair. Each code handler added through <a href='#coddoc_addCodeHandler'> coddoc.addCodeHandler</a> and
+tag handler added through <a href='#coddoc_addTagHandler'> coddoc.addTagHandler</a> adds/removes properties from a the symbol. Each symbol is
+added to the <a href='#coddoc_Tree'> coddoc.Tree</a> which is either returned from <a href='#coddoc'> coddoc</a> or passed into a template handler.
 
 <b>NOTE: This object should not be instantiated by user code</b>
 
@@ -1543,69 +1557,71 @@ added to the <a href='#coddoc_Tree'>coddoc.Tree</a> which is either returned fro
     
         <a name="coddoc_Symbol_instanceProperties"></a>
         <em>Instance Properties</em>
-        <table class='table table-bordered table-striped'><tr><td>Property</td><td>Type</td><td>Default Value</td><td>Description</td></tr><tr><td><em>augments</em></td><td>{Array}</td><td><code>
+        <table class='table table-bordered table-striped'><tr><td>Property</td><td>Type</td><td>Default Value</td><td>Description</td></tr><tr><td>augments</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Any symbols this symbol augments
-</td><tr><tr><td><em>borrows</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>borrows</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Any properties this symbol borrows
-</td><tr><tr><td><em>codeObject</em></td><td>{Object}</td><td><code>null</code></td><td>
+</td><tr><tr><td>codeObject</td><td>{Object}</td><td><code>null</code></td><td>
 The codeObject of this symbol
-</td><tr><tr><td><em>description</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>description</td><td>{String}</td><td><code>""</code></td><td>
 The description of this symbol.
-</td><tr><tr><td><em>examples</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>examples</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The examples for this symbol
-</td><tr><tr><td><em>file</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>file</td><td>{String}</td><td><code>""</code></td><td>
 The file where the symbol was found.
-</td><tr><tr><td><em>fullname</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>fullname</td><td>{String}</td><td><code>""</code></td><td>
 The fullname i.e ({memberof}.{name})
-</td><tr><tr><td><em>ignoreCode</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>ignore</td><td>{Boolean}</td><td><code>false</code></td><td>
+Set to true if the symbol should be ignored and not put into <a href='#coddoc_Tree'> coddoc.Tree</a>
+</td><tr><tr><td>ignoreCode</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if the code object from this symbol should be ignored.
-</td><tr><tr><td><em>isConstant</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isConstant</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is a constant.
-</td><tr><tr><td><em>isConstructor</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isConstructor</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true is this symbol is a constructor
-</td><tr><tr><td><em>isFunction</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isFunction</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is a function.
-</td><tr><tr><td><em>isPrivate</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isPrivate</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is private.
-</td><tr><tr><td><em>isProtected</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isProtected</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is protected.
-</td><tr><tr><td><em>isStatic</em></td><td>{Boolean}</td><td><code>false</code></td><td>
+</td><tr><tr><td>isStatic</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if this symbol is static
-</td><tr><tr><td><em>memberof</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>memberof</td><td>{String}</td><td><code>""</code></td><td>
 Who this symbol belongs to.
-</td><tr><tr><td><em>name</em></td><td>{String}</td><td><code>""</code></td><td>
+</td><tr><tr><td>name</td><td>{String}</td><td><code>""</code></td><td>
 The name of this symbol
-</td><tr><tr><td><em>params</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>params</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The associated params for this symbol if it is a funciton.
-</td><tr><tr><td><em>properties</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>properties</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The associated properties for this symbol
-</td><tr><tr><td><em>returns</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>returns</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Array of return types for this symbol
-</td><tr><tr><td><em>see</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>see</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Any link for this symbol
-</td><tr><tr><td><em>tags</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>tags</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 The associated tags for this symbol
-</td><tr><tr><td><em>throws</em></td><td>{Array}</td><td><code>
+</td><tr><tr><td>throws</td><td>{Array}</td><td><code>
 []
- </code></td><td>
+     </code></td><td>
 Exceptions thrown by this symbol
-</td><tr><tr><td><em>type</em></td><td>{*}</td><td><code>null</code></td><td>
+</td><tr><tr><td>type</td><td>{*}</td><td><code>null</code></td><td>
 The type that is symbol represents.
 </td><tr></table>
     
@@ -1634,13 +1650,17 @@ function (options){
    this.examples = [];
    this.borrows = [];
    this.augments = [];
+   this.includedDocs = [];
    this.see = [];
    this.throws = [];
    this.returns = [];
    options = options || {};
    for (var i in options) {
-       this[i] = options[i];
+       if (i in this) {
+           this[i] = options[i];
+       }
    }
+       
 }
             </pre>
       
@@ -1678,8 +1698,6 @@ function (options){
                                 
                                 <li><a href="#coddoc_Tree_prototype__addSymbol">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -1691,8 +1709,6 @@ function (options){
                                 </a></li>
                                 
                                 <li><a href="#coddoc_Tree_prototype_addSymbol">
-                                
-                                <span class="label label-info">S</span>
                                 
                                 
                                 <span class="label label-label">F</span>
@@ -1708,8 +1724,6 @@ function (options){
                                 
                                 <li><a href="#coddoc_Tree_prototype_getClasses">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -1723,8 +1737,6 @@ function (options){
                                 </a></li>
                                 
                                 <li><a href="#coddoc_Tree_prototype_getMembers">
-                                
-                                <span class="label label-info">S</span>
                                 
                                 
                                 <span class="label label-label">F</span>
@@ -1740,8 +1752,6 @@ function (options){
                                 
                                 <li><a href="#coddoc_Tree_prototype_getNamespaces">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -1756,8 +1766,6 @@ function (options){
                                 
                                 <li><a href="#coddoc_Tree_prototype_getSymbol">
                                 
-                                <span class="label label-info">S</span>
-                                
                                 
                                 <span class="label label-label">F</span>
                                 
@@ -1771,8 +1779,6 @@ function (options){
                                 </a></li>
                                 
                                 <li><a href="#coddoc_Tree_prototype_hasSymbol">
-                                
-                                <span class="label label-info">S</span>
                                 
                                 
                                 <span class="label label-label">F</span>
@@ -1820,6 +1826,7 @@ A Tree object which contains symbols.
             <pre class="prettyprint linenums lang-js">
 function (){
    this.symbols = {global:[]};
+       
 }
             </pre>
       
@@ -1830,8 +1837,6 @@ function (){
     <a name="coddoc_Tree_prototype__addSymbol"></a>
     <h3>
         _addSymbol
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1875,6 +1880,7 @@ function (name){
        ret = this.symbols[name] = [];
    }
    return ret;
+       
 }
     </pre>
     
@@ -1884,8 +1890,6 @@ function (name){
     <a name="coddoc_Tree_prototype_addSymbol"></a>
     <h3>
         addSymbol
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1925,10 +1929,14 @@ Entry point to add the symbol
     <em>Source</em>
     <pre class="prettyprint linenums lang-js">
 function (symbol){
-   var path = symbol.memberof, name = symbol.name;
-   path == &quot;global&quot; &amp;&amp; (path = name);
+   var nameParts = utils.splitName(symbol.fullName);
+   var path = nameParts.memberof, name = nameParts.name;
+   if (path === &quot;global&quot;) {
+       path = name;
+   }
    var sym = this.getSymbol(path);
    sym.push(symbol);
+       
 }
     </pre>
     
@@ -1938,8 +1946,6 @@ function (symbol){
     <a name="coddoc_Tree_prototype_getClasses"></a>
     <h3>
         getClasses
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -1993,7 +1999,7 @@ function (){
        var name = s.fullName;
        var statics = symbols[name] || [];
        var instance = symbols[name + &quot;.prototype&quot;] || [];
-       var borrowedMethods = [], borrowedProperties = [], staticBorrowedMethods = [], staticBorrowedProperties = []
+       var borrowedMethods = [], borrowedProperties = [], staticBorrowedMethods = [], staticBorrowedProperties = [];
        s.borrows.map(function (b) {
            var borrows = b.borrows;
            var symbol = symbols[borrows.memberof || &quot;global&quot;].filter(function (s) {
@@ -2026,7 +2032,6 @@ function (){
        s.staticProperties = statics.filter(
            function (s) {
                return !s.isFunction &amp;&amp; !s.isNamespace;
-               ;
            }).concat(staticBorrowedProperties);
        s.instanceMethods = instance.filter(
            function (s) {
@@ -2038,6 +2043,7 @@ function (){
            }).concat(s.properties || []).concat(borrowedProperties);
        return s;
    });
+       
 }
     </pre>
     
@@ -2047,8 +2053,6 @@ function (){
     <a name="coddoc_Tree_prototype_getMembers"></a>
     <h3>
         getMembers
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -2064,7 +2068,7 @@ function (){
 <em>Defined tree.js</em>
 
 <p>
-Gets all members(<a href='#coddoc_Symbol'>coddoc.Symbol</a>) for a particular path.
+Gets all members(<a href='#coddoc_Symbol'> coddoc.Symbol</a>) for a particular path.
 </p>
 
 
@@ -2098,6 +2102,7 @@ function (path){
        }));
    });
    return namespaces;
+       
 }
     </pre>
     
@@ -2107,8 +2112,6 @@ function (path){
     <a name="coddoc_Tree_prototype_getNamespaces"></a>
     <h3>
         getNamespaces
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -2157,17 +2160,18 @@ function (){
        }));
    });
    return namespaces.map(function (s) {
-       var realName = s.memberof &amp;&amp; s.memberof != &quot;global&quot; ? [s.memberof, s.name].join(&quot;.&quot;) : s.name;
+       var realName = s.memberof &amp;&amp; s.memberof !== &quot;global&quot; ? [s.memberof, s.name].join(&quot;.&quot;) : s.name;
        var members = this.getMembers(realName);
        s.name = realName;
-       s.properties = members.filter(function (m) {
+       s.properties = s.properties.concat(members.filter(function (m) {
            return !m.isFunction;
-       });
+       }));
        s.methods = members.filter(function (m) {
            return m.isFunction;
        });
        return s;
    }, this);
+       
 }
     </pre>
     
@@ -2177,8 +2181,6 @@ function (){
     <a name="coddoc_Tree_prototype_getSymbol"></a>
     <h3>
         getSymbol
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -2221,6 +2223,7 @@ Returns a symbol from this tree. The Tree will create the symbol if it does not 
     <pre class="prettyprint linenums lang-js">
 function (name){
    return this._addSymbol(name);
+       
 }
     </pre>
     
@@ -2230,8 +2233,6 @@ function (name){
     <a name="coddoc_Tree_prototype_hasSymbol"></a>
     <h3>
         hasSymbol
-        
-        <span class="label label-info">Static</span>
         
         
         <span class="label label-label">Function</span>
@@ -2275,6 +2276,7 @@ Returns true if this tree contains a symbol.
 function (name){
    var parts = name.split(&quot;.&quot;);
    return !!this.symbols[name];
+       
 }
     </pre>
     
@@ -2285,11 +2287,11 @@ function (name){
         
   <h2>License</h2>
 
-<p>MIT <a href = https://github.com/Pollenware/downdoc/raw/master/LICENSE>LICENSE</a><p>
+<p>MIT <a href = https://github.com/Pollenware/coddoc/raw/master/LICENSE>LICENSE</a><p>
 
 <h2>Meta</h2>
 <hr>
-<p>Code: <code>git clone git://github.com/pollenware/downdoc.git</code></br></p>
+<p>Code: <code>git clone git://github.com/pollenware/coddoc.git</code></br></p>
 
         </div>
     </div>

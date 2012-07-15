@@ -6,7 +6,7 @@
 <h2> Description</h2>
 <p>
     coddoc is a jsdoc parsing library. Coddoc is different in that it is easily extensible by allowing users to
-    add tag and code parsers through the use of <a href='# coddoc_addTagHandler'> coddoc.addTagHandler</a> and <a href='# coddoc_addCodeHandler'> coddoc.addCodeHandler</a>.
+    add tag and code parsers through the use of <a href='#coddoc_addTagHandler'> coddoc.addTagHandler</a> and <a href='#coddoc_addCodeHandler'> coddoc.addCodeHandler</a>.
     coddoc also parses source code to be used in APIs.
 </p>
 
@@ -161,7 +161,7 @@ Entry point for parsing code.
 
 
 ---
-*Defined * [Top](#top)
+*Defined parser/code.js* [Top](#top)
 
 
 Adds a handler for a particular code regular expression. Useful if you want to
@@ -236,7 +236,7 @@ addHandler(/^var *\w+ *= * (\w+(?:\.\w+)*) = *function/, 20, function (str, symb
  * _[priority=0]_  : the priority to give this code handler if not provided
 it is defaulted to 0.
         
- * _parse_  : a function that returns an object. The object will be set as the <code>codeObject</code> on the <a href='# coddoc_Symbol'> coddoc.Symbol</a>. The properties of the object will be added to the <a href='# coddoc_Symbol'> coddoc.Symbol</a> for processing later.
+ * _parse_  : a function that returns an object. The object will be set as the <code>codeObject</code> on the <a href='#coddoc_Symbol'> coddoc.Symbol</a>. The properties of the object will be added to the <a href='#coddoc_Symbol'> coddoc.Symbol</a> for processing later.
         
      
      
@@ -271,10 +271,10 @@ function (regexp,priority,parse){
 
 
 ---
-*Defined * [Top](#top)
+*Defined parser/tags.js* [Top](#top)
 
 
-Adds a new tag to be parsed. You can use this to add custom tags. <a href='# coddoc'> coddoc</a> will
+Adds a new tag to be parsed. You can use this to add custom tags. <a href='#coddoc'> coddoc</a> will
 not do anything with the new tag by default, however you can add functionality to handle the
 new tag in the template.
 
@@ -349,7 +349,7 @@ function (tag,parse){
 
 
 ---
-*Defined * [Top](#top)
+*Defined parser/tags.js* [Top](#top)
 
 
 Returns a regular expression that can be used to parse tags
@@ -383,10 +383,10 @@ function (){
 
 
 ---
-*Defined * [Top](#top)
+*Defined parser/index.js* [Top](#top)
 
 
-Parses a string of code into <a href='# coddoc_Symbol'> coddoc.Symbol</a>s. All processed symbols are added to the <a href='# coddoc_Tree'> coddoc.Tree</a>.
+Parses a string of code into <a href='#coddoc_Symbol'> coddoc.Symbol</a>s. All processed symbols are added to the <a href='#coddoc_Tree'> coddoc.Tree</a>.
 This method is not intended to be used directly by user code.
 
 
@@ -460,11 +460,11 @@ function (str,filepath,tree,context,emitter){
 
 
 ---
-*Defined * [Top](#top)
+*Defined parser/code.js* [Top](#top)
 
 
 Uses Registered handlers to parse the next block of code from a code fragment. This function is
-used by <a href='# coddoc_parse'> coddoc.parse</a> to parse code for comments.
+used by <a href='#coddoc_parse'> coddoc.parse</a> to parse code for comments.
 
 
         
@@ -513,12 +513,12 @@ function (str,symbol,context){
 
 
 ---
-*Defined * [Top](#top)
+*Defined parser/tags.js* [Top](#top)
 
 
 Parses a tag and the coresponding comment using a matching tag handler. Each parsed tag
-could add a new property to the <a href='# coddoc_Symbol'> coddoc.Symbol</a>. The parsed tag will be added the the
-<a href='# coddoc_Symbol_prototype_tags'> coddoc.Symbol#tags</a> array.
+could add a new property to the <a href='#coddoc_Symbol'> coddoc.Symbol</a>. The parsed tag will be added the the
+<a href='#coddoc_Symbol_prototype_tags'> coddoc.Symbol#tags</a> array.
 
 
         
@@ -614,7 +614,7 @@ The context should not be used directly by user code.
 
 ###Constructor
 
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
      
 
 
@@ -641,7 +641,7 @@ function (){
 
 
 ---
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
 
 
 Activates a scope for.
@@ -681,7 +681,7 @@ function (name){
 
 
 ---
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
 
 
 Adds a namespace the the context object.
@@ -723,7 +723,7 @@ function (name){
 
 
 ---
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
 
 
 Adds a scope to the context
@@ -766,7 +766,7 @@ function (name){
 
 
 ---
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
 
 
 Returns the active scope.
@@ -800,7 +800,7 @@ function (){
 
 
 ---
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
 
 
 Returns the name of the active scope.
@@ -834,7 +834,7 @@ function (){
 
 
 ---
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
 
 
 Gets a namespace, creating it if it does not exist.
@@ -874,7 +874,7 @@ function (name){
 
 
 ---
-*Defined * [Top](#top)
+*Defined context.js* [Top](#top)
 
 
 Gets a scope creating it if it does not exist.
@@ -915,9 +915,9 @@ function (name){
 [Top](#top)
 
 
-A Symbol represents a comment and code pair. Each code handler added through <a href='# coddoc_addCodeHandler'> coddoc.addCodeHandler</a> and
-tag handler added through <a href='# coddoc_addTagHandler'> coddoc.addTagHandler</a> adds/removes properties from a the symbol. Each symbol is
-added to the <a href='# coddoc_Tree'> coddoc.Tree</a> which is either returned from <a href='# coddoc'> coddoc</a> or passed into a template handler.
+A Symbol represents a comment and code pair. Each code handler added through <a href='#coddoc_addCodeHandler'> coddoc.addCodeHandler</a> and
+tag handler added through <a href='#coddoc_addTagHandler'> coddoc.addTagHandler</a> adds/removes properties from a the symbol. Each symbol is
+added to the <a href='#coddoc_Tree'> coddoc.Tree</a> which is either returned from <a href='#coddoc'> coddoc</a> or passed into a template handler.
 
 <b>NOTE: This object should not be instantiated by user code</b>
 
@@ -952,7 +952,7 @@ The file where the symbol was found.
 </td><tr><tr><td>fullname</td><td>{String}</td><td><code>""</code></td><td>
 The fullname i.e ({memberof}.{name})
 </td><tr><tr><td>ignore</td><td>{Boolean}</td><td><code>false</code></td><td>
-Set to true if the symbol should be ignored and not put into <a href='# coddoc_Tree'> coddoc.Tree</a>
+Set to true if the symbol should be ignored and not put into <a href='#coddoc_Tree'> coddoc.Tree</a>
 </td><tr><tr><td>ignoreCode</td><td>{Boolean}</td><td><code>false</code></td><td>
 Set to true if the code object from this symbol should be ignored.
 </td><tr><tr><td>isConstant</td><td>{Boolean}</td><td><code>false</code></td><td>
@@ -1005,7 +1005,7 @@ The type that is symbol represents.
 
 ###Constructor
 
-*Defined * [Top](#top)
+*Defined symbol.js* [Top](#top)
      
 *Arguments*
 
@@ -1026,12 +1026,13 @@ function (options){
    this.examples = [];
    this.borrows = [];
    this.augments = [];
+   this.includedDocs = [];
    this.see = [];
    this.throws = [];
    this.returns = [];
    options = options || {};
    for (var i in options) {
-       if (this.hasOwnProperty(i)) {
+       if (i in this) {
            this[i] = options[i];
        }
    }
@@ -1083,7 +1084,7 @@ A Tree object which contains symbols.
 
 ###Constructor
 
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
      
 
 
@@ -1107,7 +1108,7 @@ function (){
 
 
 ---
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
 
 
 Adds a symbol to this tree.
@@ -1150,7 +1151,7 @@ function (name){
 
 
 ---
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
 
 
 Entry point to add the symbol
@@ -1196,7 +1197,7 @@ function (symbol){
 
 
 ---
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
 
 
 Returns all classes in the tree. The following properties are added to each class symbol.
@@ -1292,10 +1293,10 @@ function (){
 
 
 ---
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
 
 
-Gets all members(<a href='# coddoc_Symbol'> coddoc.Symbol</a>) for a particular path.
+Gets all members(<a href='#coddoc_Symbol'> coddoc.Symbol</a>) for a particular path.
 
         
      
@@ -1339,7 +1340,7 @@ function (path){
 
 
 ---
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
 
 
 Returns all namespaces in this tree. This method also adds the following values to the namespace.
@@ -1397,7 +1398,7 @@ function (){
 
 
 ---
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
 
 
 Returns a symbol from this tree. The Tree will create the symbol if it does not exist.
@@ -1437,7 +1438,7 @@ function (name){
 
 
 ---
-*Defined * [Top](#top)
+*Defined tree.js* [Top](#top)
 
 
 Returns true if this tree contains a symbol.
@@ -1476,11 +1477,11 @@ function (name){
 
   <h2>License</h2>
 
-<p>MIT <a href = https://github.com/Pollenware/downdoc/raw/master/LICENSE>LICENSE</a><p>
+<p>MIT <a href = https://github.com/Pollenware/coddoc/raw/master/LICENSE>LICENSE</a><p>
 
 <h2>Meta</h2>
 <hr>
-<p>Code: <code>git clone git://github.com/pollenware/downdoc.git</code></br></p>
+<p>Code: <code>git clone git://github.com/pollenware/coddoc.git</code></br></p>
 
 
 

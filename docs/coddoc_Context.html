@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coddoc</title>
+    <link rel="stylesheet" href="./assets/css/bootstrap.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="./assets/js/google-code-prettify/prettify.css">
+    <style type="text/css">
+        
+
+.subnav-inner {
+    width: 100%;
+    height: 36px;
+    background-color: #EEE;
+    background-repeat: repeat-x;
+    background-image: -moz-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, whiteSmoke), color-stop(100%, #EEE));
+    background-image: -webkit-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -ms-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -o-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#f5f5f5', endColorstr = '#eeeeee', GradientType = 0);
+    background-image: linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.subnav .nav > li > a:hover {
+    color: black !important;
+}
+
+.subnav .nav li.dropdown .dropdown-toggle .caret,
+.subnav .nav li.dropdown.open .caret {
+    border-top-color: #999 !important;
+    border-bottom-color: #999 !important;
+}
+
+.subnav-fixed {
+    position: fixed;
+    width : 90%;
+    margin-right: auto;
+    margin-left: auto;
+    top: 40px;
+    left: 0;
+    right: 0;
+    z-index: 1020;
+    border-color: #D5D5D5;
+    border-width: 0 0 1px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    -moz-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.navbar .nav  .dropdown-menu {
+    max-height: 500px;
+    overflow: auto;
+}​
+
+    </style>
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <script type="text/javascript">
+        var init = (function () {
+            "use strict";
+
+            var processScroll = (function () {
+                var curr = null, prev = null;
+                return function (nav) {
+                    var $win = $(window);
+                    $('.subnav').each(function () {
+                        var nav = $(this);
+                        var navTop = nav.offset().top - 40;
+                        var scrollTop = $win.scrollTop();
+                        if (scrollTop >= navTop && curr != nav) {
+                            if(curr){
+                                curr.removeClass('subnav-fixed')
+                                prev = curr;
+                            }
+                            curr = nav;
+                            curr.addClass('subnav-fixed')
+                        } else if (curr == nav && scrollTop <= navTop) {
+                            curr.removeClass('subnav-fixed');
+                            prev.addClass('subnav-fixed');
+                            curr = prev;
+                        }else{
+                            nav.removeClass('subnav-fixed');
+                        }
+                    });
+                };
+            })();
+
+            return function () {
+                window.prettyPrint && prettyPrint();
+                $(".collapse").collapse();
+                // fix sub nav on scroll
+                processScroll();
+                $(window).on('scroll', processScroll)
+            }
+        })();
+    </script>
+</head>
+<body onload="init()">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+      
+          <a href="./index.html" class="brand">coddoc</a>
+      
+      <div class="nav-collapse">
+      <ul class="nav nav-pills">
+      
+
+      
+        <li class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+           <ul class="dropdown-menu">
+             
+                         <li><a href="coddoc.html">coddoc</a></li>
+               
+           </ul>
+           </li>
+        
+        
+           <li class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+           <ul class="dropdown-menu">
+             
+                         <li><a href="./coddoc_Context.html">coddoc.Context</a></li>
+               
+                         <li><a href="./coddoc_Symbol.html">coddoc.Symbol</a></li>
+               
+                         <li><a href="./coddoc_Tree.html">coddoc.Tree</a></li>
+               
+           </ul>
+        </li>
+       
+      </ul>
+      
+      <ul class="nav pull-right">
+                  <li><a href="https://github.com/doug-martin/coddoc" target="#github" class="pull-right">github</a></li>
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid">
+    <a name="top"></a>
+    <div class="container">
+
+
+
+    <a name=""></a>
+    <div class="navbar subnav">
+    <div class="navbar-inner  subnav-inner">
+          <div class="container">
+            <a href="#" class="brand">
+            coddoc.Context
+            
+                    
+             <span class="label label-success">Public</span>
+                    
+            
+            </a>
+           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </a>
+                    <div class="nav-collapse">
+
+            <ul class="nav pull-right">
+             <li><a href="#constructor">Constructor</a></li>
+                        
+                        
+                        
+                        
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Instance Methods<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                
+                                <li><a href="./coddoc_Context.html#activateScope">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                activateScope
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Context.html#addNamespace">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                addNamespace
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Context.html#addScope">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                addScope
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Context.html#getActiveScope">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getActiveScope
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Context.html#getActiveScopeName">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getActiveScopeName
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Context.html#getNamespace">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getNamespace
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Context.html#getScope">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getScope
+
+                                </a></li>
+                                
+                            </ul>
+                        </li>
+                        
+            </ul>
+            </div>
+            </div>
+     </div>
+</div>
+
+
+
+    <p>
+A Context object used to keep state when parsing symbols.
+The context should not be used directly by user code.
+
+</p>
+    
+
+    
+
+    
+    
+
+    <a name="constructor"></a>
+    <h3>Constructor</h3>
+
+    <em>Defined context.js</em>
+    
+    
+    
+        
+            <em>Source</em>
+            <pre class="prettyprint linenums lang-js">
+function (){
+   this.scopes = {};
+   this.nameSpaces = {global:[]};
+   this.aliases = {};
+   this.activateScope(&quot;global&quot;);
+       
+}
+            </pre>
+      
+    
+
+  
+  
+    <a name="activateScope"></a>
+    <h3>
+        activateScope
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined context.js</em>
+
+<p>
+Activates a scope for.
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name of the scope.</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Object</code> the activated scope object.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   this.activeScope = name;
+   return this.addScope(name);
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="addNamespace"></a>
+    <h3>
+        addNamespace
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined context.js</em>
+
+<p>
+Adds a namespace the the context object.
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name of the namespace</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Object</code> the object for the namespace.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   if (&quot;undefined&quot; === typeof this.nameSpaces[name]) {
+       this.nameSpaces[name] = {};
+   }
+   return this.nameSpaces[name];
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="addScope"></a>
+    <h3>
+        addScope
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined context.js</em>
+
+<p>
+Adds a scope to the context
+
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name of the scope to add,</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Object</code> the object for the namespace.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   if (&quot;undefined&quot; === typeof this.scopes[name]) {
+       this.scopes[name] = {};
+   }
+   return this.scopes[name];
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getActiveScope"></a>
+    <h3>
+        getActiveScope
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined context.js</em>
+
+<p>
+Returns the active scope.
+
+</p>
+
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Object</code> the scope object</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (){
+   return this.getScope(this.activeScope);
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getActiveScopeName"></a>
+    <h3>
+        getActiveScopeName
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined context.js</em>
+
+<p>
+Returns the name of the active scope.
+
+</p>
+
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>String</code> the active scope name.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (){
+   return this.activeScope;
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getNamespace"></a>
+    <h3>
+        getNamespace
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined context.js</em>
+
+<p>
+Gets a namespace, creating it if it does not exist.
+
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name of the context</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Object</code> the object for the namespace.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   return this.addNamespace(name);
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getScope"></a>
+    <h3>
+        getScope
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined context.js</em>
+
+<p>
+Gets a scope creating it if it does not exist.
+
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name of the scope to get,</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Object</code> the object for the namespace.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   return this.addScope(name);
+       
+}
+    </pre>
+    
+
+
+  
+<hr>
+
+    
+  <h2>License</h2>
+
+<p>MIT <a href = https://github.com/Pollenware/coddoc/raw/master/LICENSE>LICENSE</a><p>
+
+<h2>Meta</h2>
+<hr>
+<p>Code: <code>git clone git://github.com/pollenware/coddoc.git</code></br></p>
+
+
+
+</div>
+</div>
+<script type="text/javascript" src="./assets/js/jquery.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-transition.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-dropdown.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-tab.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-tooltip.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-popover.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-button.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-collapse.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-carousel.js"></script>
+<script type="text/javascript"
+        src="./assets/js/google-code-prettify/prettify.js"></script>
+
+</body>
+</html>

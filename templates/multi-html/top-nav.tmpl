@@ -9,9 +9,9 @@
       {{#if projectName}}
           <a href="./index.html" class="brand">{{projectName}}</a>
       {{/if}}
-      {{#if includeDocs.length}}
-           <div class="nav-collapse">
+      <div class="nav-collapse">
       <ul class="nav nav-pills">
+      {{#if includeDocs.length}}
       {{#each includeDocs}}
                  <li><a href="{{resolveInclude location}}">{{docName}}</a></li>
                  {{/each}}

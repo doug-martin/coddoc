@@ -1,3 +1,8 @@
-{{#each footers}}
+<hr>
+{{#if footers.length}}
+    {{#each footers}}
   {{{replaceLinks footer}}}
 {{/each}}
+{{else}}
+Documentation gennerated using <a href="https://github.com/doug-martin/coddoc">coddoc</a>.
+{{/if}}
