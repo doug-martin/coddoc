@@ -49,14 +49,16 @@
     <ul>
          <li>ignoreCode : ignore the parsed code in the output</li>
          <li>includeDoc : include an external doc. External docs can be html or markdown.
-         Example ```javascript
+         Example
+         ```javascript
  &#64;includeDoc [Title Of Doc] ../location/of_doc.md
 ```
          </li>
          <li>projectName : document the projectName</li>
          <li>github : url to github project</li>
          <li>code : specifies a code block without needing an <code>example</code> tag
-         Example ```javascript
+         Example
+         ```javascript
  &#123;&#64;code var test = "test"; &#125;
 ```
          </li>
