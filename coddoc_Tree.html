@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coddoc</title>
+    <link rel="stylesheet" href="./assets/css/bootstrap.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="./assets/js/google-code-prettify/prettify.css">
+    <style type="text/css">
+        
+
+.subnav-inner {
+    width: 100%;
+    height: 36px;
+    background-color: #EEE;
+    background-repeat: repeat-x;
+    background-image: -moz-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, whiteSmoke), color-stop(100%, #EEE));
+    background-image: -webkit-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -ms-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -o-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#f5f5f5', endColorstr = '#eeeeee', GradientType = 0);
+    background-image: linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.subnav .nav > li > a:hover {
+    color: black !important;
+}
+
+.subnav .nav li.dropdown .dropdown-toggle .caret,
+.subnav .nav li.dropdown.open .caret {
+    border-top-color: #999 !important;
+    border-bottom-color: #999 !important;
+}
+
+.subnav-fixed {
+    position: fixed;
+    width : 90%;
+    margin-right: auto;
+    margin-left: auto;
+    top: 40px;
+    left: 0;
+    right: 0;
+    z-index: 1020;
+    border-color: #D5D5D5;
+    border-width: 0 0 1px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    -moz-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.navbar .nav  .dropdown-menu {
+    max-height: 500px;
+    overflow: auto;
+}​
+
+    </style>
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <script type="text/javascript">
+        var init = (function () {
+            "use strict";
+
+            var processScroll = (function () {
+                var curr = null, prev = null;
+                return function (nav) {
+                    var $win = $(window);
+                    $('.subnav').each(function () {
+                        var nav = $(this);
+                        var navTop = nav.offset().top - 40;
+                        var scrollTop = $win.scrollTop();
+                        if (scrollTop >= navTop && curr != nav) {
+                            if(curr){
+                                curr.removeClass('subnav-fixed')
+                                prev = curr;
+                            }
+                            curr = nav;
+                            curr.addClass('subnav-fixed')
+                        } else if (curr == nav && scrollTop <= navTop) {
+                            curr.removeClass('subnav-fixed');
+                            prev.addClass('subnav-fixed');
+                            curr = prev;
+                        }else{
+                            nav.removeClass('subnav-fixed');
+                        }
+                    });
+                };
+            })();
+
+            return function () {
+                window.prettyPrint && prettyPrint();
+                $(".collapse").collapse();
+                // fix sub nav on scroll
+                processScroll();
+                $(window).on('scroll', processScroll)
+            }
+        })();
+    </script>
+</head>
+<body onload="init()">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+      
+          <a href="./index.html" class="brand">coddoc</a>
+      
+      <div class="nav-collapse">
+      <ul class="nav nav-pills">
+      
+
+      
+        <li class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+           <ul class="dropdown-menu">
+             
+                         <li><a href="coddoc.html">coddoc</a></li>
+               
+           </ul>
+           </li>
+        
+        
+           <li class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+           <ul class="dropdown-menu">
+             
+                         <li><a href="./coddoc_Context.html">coddoc.Context</a></li>
+               
+                         <li><a href="./coddoc_Symbol.html">coddoc.Symbol</a></li>
+               
+                         <li><a href="./coddoc_Tree.html">coddoc.Tree</a></li>
+               
+           </ul>
+        </li>
+       
+      </ul>
+      
+      <ul class="nav pull-right">
+                  <li><a href="https://github.com/doug-martin/coddoc" target="#github" class="pull-right">github</a></li>
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid">
+    <a name="top"></a>
+    <div class="container">
+
+
+
+    <a name=""></a>
+    <div class="navbar subnav">
+    <div class="navbar-inner  subnav-inner">
+          <div class="container">
+            <a href="#" class="brand">
+            coddoc.Tree
+            
+            <span class="label label-important">Private</span>
+            
+            </a>
+           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </a>
+                    <div class="nav-collapse">
+
+            <ul class="nav pull-right">
+             <li><a href="#constructor">Constructor</a></li>
+                        
+                        
+                        
+                        
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Instance Methods<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                
+                                <li><a href="./coddoc_Tree.html#_addSymbol">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                <span class="label label-important">P</span>
+                                
+                                _addSymbol
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Tree.html#addSymbol">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                addSymbol
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Tree.html#getClasses">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getClasses
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Tree.html#getMembers">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getMembers
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Tree.html#getNamespaces">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getNamespaces
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Tree.html#getSymbol">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                getSymbol
+
+                                </a></li>
+                                
+                                <li><a href="./coddoc_Tree.html#hasSymbol">
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                                hasSymbol
+
+                                </a></li>
+                                
+                            </ul>
+                        </li>
+                        
+            </ul>
+            </div>
+            </div>
+     </div>
+</div>
+
+
+
+    <p>
+A Tree object which contains symbols.
+
+</p>
+    
+
+    
+
+    
+    
+
+    <a name="constructor"></a>
+    <h3>Constructor</h3>
+
+    <em>Defined tree.js</em>
+    
+    
+    
+        
+            <em>Source</em>
+            <pre class="prettyprint linenums lang-js">
+function (){
+   this.symbols = {global:[]};
+       
+}
+            </pre>
+      
+    
+
+  
+  
+    <a name="_addSymbol"></a>
+    <h3>
+        _addSymbol
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+        <span class="label label-important">Private</span>
+        
+   </h3>
+
+<hr/>
+<em>Defined tree.js</em>
+
+<p>
+Adds a symbol to this tree.
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name of the symbol to add.</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Array</code> </li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   var ret = this.symbols[name];
+   if (!ret) {
+       ret = this.symbols[name] = [];
+   }
+   return ret;
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="addSymbol"></a>
+    <h3>
+        addSymbol
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined tree.js</em>
+
+<p>
+Entry point to add the symbol
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>symbol</em>  : </li>
+    
+        <li> <em>path</em> <code>String</code> : the path of the symbol. i.e the memberof property of a symbol</li>
+    
+        <li> <em>name</em>  : </li>
+    
+        <li> <em>obj</em>  : </li>
+    
+     </ul>
+
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (symbol){
+   var nameParts = utils.splitName(symbol.fullName);
+   var path = nameParts.memberof, name = nameParts.name;
+   if (path === &quot;global&quot;) {
+       path = name;
+   }
+   var sym = this.getSymbol(path);
+   sym.push(symbol);
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getClasses"></a>
+    <h3>
+        getClasses
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined tree.js</em>
+
+<p>
+Returns all classes in the tree. The following properties are added to each class symbol.
+
+<ul>
+    <li>staticMethods : all static methods for the class</li>
+    <li>staticProperties : all static properties for the class</li>
+    <li>instanceMethods : all isntance methods for the class</li>
+    <li>instanceProperties : all instance properties for a class</li>
+</ul>
+
+</p>
+
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Array</code> </li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (){
+   var symbols = this.symbols,
+       objects = [],
+       keys = Object.keys(this.symbols);
+   keys.forEach(function (k) {
+       objects = objects.concat(symbols[k].filter(function (s) {
+           return s.isConstructor;
+       }));
+   });
+   return objects.map(function (s) {
+       var name = s.fullName;
+       var statics = symbols[name] || [];
+       var instance = symbols[name + &quot;.prototype&quot;] || [];
+       var borrowedMethods = [], borrowedProperties = [], staticBorrowedMethods = [], staticBorrowedProperties = [];
+       s.borrows.map(function (b) {
+           var borrows = b.borrows;
+           var symbol = symbols[borrows.memberof || &quot;global&quot;].filter(function (s) {
+               return s.name === borrows.name;
+           });
+           if (symbol.length) {
+               symbol = symbol[0];
+               var memberof = b.isStatic ? name : name + &quot;.prototype&quot;;
+               var newSymb = new Symbol(utils.merge({}, symbol, {name:b.as, isStatic:b.isStatic, fullName:memberof + &quot;.&quot; + b.as, memberof:memberof}));
+               if (b.isStatic) {
+                   if (s.isFunction) {
+                       staticBorrowedMethods.push(newSymb);
+                   } else {
+                       staticBorrowedProperties.push(newSymb);
+                   }
+               } else {
+                   if (s.isFunction) {
+                       borrowedMethods.push(newSymb);
+                   } else {
+                       borrowedProperties.push(newSymb);
+                   }
+               }
+           }
+       });
+       s.name = name;
+       s.staticMethods = statics.filter(
+           function (s) {
+               return s.isFunction &amp;&amp; !s.isConstructor;
+           }).concat(staticBorrowedMethods);
+       s.staticProperties = statics.filter(
+           function (s) {
+               return !s.isFunction &amp;&amp; !s.isNamespace;
+           }).concat(staticBorrowedProperties);
+       s.instanceMethods = instance.filter(
+           function (s) {
+               return s.isFunction &amp;&amp; !s.isConstructor;
+           }).concat(borrowedMethods);
+       s.instanceProperties = instance.filter(
+           function (s) {
+               return !s.isFunction &amp;&amp; !s.isNamespace;
+           }).concat(s.properties || []).concat(borrowedProperties);
+       return s;
+   });
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getMembers"></a>
+    <h3>
+        getMembers
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined tree.js</em>
+
+<p>
+Gets all members(<a href='./coddoc_Symbol.html#'> coddoc.Symbol</a>) for a particular path.
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>path</em>  : the path to look up.</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Array</code> and array of symbols.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (path){
+   var symbols = this.symbols,
+       namespaces = [],
+       keys = Object.keys(this.symbols);
+   keys.forEach(function (k) {
+       namespaces = namespaces.concat(symbols[k].filter(function (s) {
+           return !s.isNamespace &amp;&amp; !s.isConstructor &amp;&amp; s.memberof === path;
+       }));
+   });
+   return namespaces;
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getNamespaces"></a>
+    <h3>
+        getNamespaces
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined tree.js</em>
+
+<p>
+Returns all namespaces in this tree. This method also adds the following values to the namespace.
+
+<ul>
+    <li>properties : all properties that belong to the namespace</li>
+    <li>methods : all methods that belong to the namespace</li>
+</ul>
+
+</p>
+
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Array</code> array of namespaces</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (){
+   var symbols = this.symbols,
+       namespaces = [],
+       keys = Object.keys(this.symbols);
+   keys.forEach(function (k) {
+       namespaces = namespaces.concat(symbols[k].filter(function (s) {
+           return s.isNamespace;
+       }));
+   });
+   return namespaces.map(function (s) {
+       var realName = s.memberof &amp;&amp; s.memberof !== &quot;global&quot; ? [s.memberof, s.name].join(&quot;.&quot;) : s.name;
+       var members = this.getMembers(realName);
+       s.name = realName;
+       s.properties = s.properties.concat(members.filter(function (m) {
+           return !m.isFunction;
+       }));
+       s.methods = members.filter(function (m) {
+           return m.isFunction;
+       });
+       return s;
+   }, this);
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="getSymbol"></a>
+    <h3>
+        getSymbol
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined tree.js</em>
+
+<p>
+Returns a symbol from this tree. The Tree will create the symbol if it does not exist.
+
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name of the symbol to get</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Array</code> the array for the symbol.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   return this._addSymbol(name);
+       
+}
+    </pre>
+    
+
+
+  
+    <a name="hasSymbol"></a>
+    <h3>
+        hasSymbol
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined tree.js</em>
+
+<p>
+Returns true if this tree contains a symbol.
+
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>name</em>  : the name to test if the tree contains the symbol</li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Boolean</code> true if the tree contains the symbol.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (name){
+   var parts = name.split(&quot;.&quot;);
+   return !!this.symbols[name];
+       
+}
+    </pre>
+    
+
+
+  
+<hr>
+
+    
+  <h2>License</h2>
+
+<p>MIT <a href = https://github.com/Pollenware/coddoc/raw/master/LICENSE>LICENSE</a><p>
+
+<h2>Meta</h2>
+<hr>
+<p>Code: <code>git clone git://github.com/pollenware/coddoc.git</code></br></p>
+
+
+
+</div>
+</div>
+<script type="text/javascript" src="./assets/js/jquery.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-transition.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-dropdown.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-tab.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-tooltip.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-popover.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-button.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-collapse.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-carousel.js"></script>
+<script type="text/javascript"
+        src="./assets/js/google-code-prettify/prettify.js"></script>
+
+</body>
+</html>

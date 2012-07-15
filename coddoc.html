@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coddoc</title>
+    <link rel="stylesheet" href="./assets/css/bootstrap.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="./assets/js/google-code-prettify/prettify.css">
+    <style type="text/css">
+        
+
+.subnav-inner {
+    width: 100%;
+    height: 36px;
+    background-color: #EEE;
+    background-repeat: repeat-x;
+    background-image: -moz-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, whiteSmoke), color-stop(100%, #EEE));
+    background-image: -webkit-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -ms-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    background-image: -o-linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#f5f5f5', endColorstr = '#eeeeee', GradientType = 0);
+    background-image: linear-gradient(top, whiteSmoke 0%, #EEE 100%);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.subnav .nav > li > a:hover {
+    color: black !important;
+}
+
+.subnav .nav li.dropdown .dropdown-toggle .caret,
+.subnav .nav li.dropdown.open .caret {
+    border-top-color: #999 !important;
+    border-bottom-color: #999 !important;
+}
+
+.subnav-fixed {
+    position: fixed;
+    width : 90%;
+    margin-right: auto;
+    margin-left: auto;
+    top: 40px;
+    left: 0;
+    right: 0;
+    z-index: 1020;
+    border-color: #D5D5D5;
+    border-width: 0 0 1px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    -moz-box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 0 #fff, 0 1px 5px rgba(0,0,0,.1);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.navbar .nav  .dropdown-menu {
+    max-height: 500px;
+    overflow: auto;
+}​
+
+    </style>
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <script type="text/javascript">
+        var init = (function () {
+            "use strict";
+
+            var processScroll = (function () {
+                var curr = null, prev = null;
+                return function (nav) {
+                    var $win = $(window);
+                    $('.subnav').each(function () {
+                        var nav = $(this);
+                        var navTop = nav.offset().top - 40;
+                        var scrollTop = $win.scrollTop();
+                        if (scrollTop >= navTop && curr != nav) {
+                            if(curr){
+                                curr.removeClass('subnav-fixed')
+                                prev = curr;
+                            }
+                            curr = nav;
+                            curr.addClass('subnav-fixed')
+                        } else if (curr == nav && scrollTop <= navTop) {
+                            curr.removeClass('subnav-fixed');
+                            prev.addClass('subnav-fixed');
+                            curr = prev;
+                        }else{
+                            nav.removeClass('subnav-fixed');
+                        }
+                    });
+                };
+            })();
+
+            return function () {
+                window.prettyPrint && prettyPrint();
+                $(".collapse").collapse();
+                // fix sub nav on scroll
+                processScroll();
+                $(window).on('scroll', processScroll)
+            }
+        })();
+    </script>
+</head>
+<body onload="init()">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+      
+          <a href="./index.html" class="brand">coddoc</a>
+      
+      <div class="nav-collapse">
+      <ul class="nav nav-pills">
+      
+
+      
+        <li class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+           <ul class="dropdown-menu">
+             
+                         <li><a href="coddoc.html">coddoc</a></li>
+               
+           </ul>
+           </li>
+        
+        
+           <li class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+           <ul class="dropdown-menu">
+             
+                         <li><a href="./coddoc_Context.html">coddoc.Context</a></li>
+               
+                         <li><a href="./coddoc_Symbol.html">coddoc.Symbol</a></li>
+               
+                         <li><a href="./coddoc_Tree.html">coddoc.Tree</a></li>
+               
+           </ul>
+        </li>
+       
+      </ul>
+      
+      <ul class="nav pull-right">
+                  <li><a href="https://github.com/doug-martin/coddoc" target="#github" class="pull-right">github</a></li>
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid">
+    <a name="top"></a>
+    <div class="container">
+
+
+
+    <a name=""></a>
+    <div class="navbar subnav">
+    <div class="navbar-inner  subnav-inner">
+                  <div class="container">
+                    <a href="#" class="brand">
+                                coddoc
+                                
+                                <span class="label label-label">Function</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">Public</span>
+                                        
+                                
+                    </a>
+                   <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                            </a>
+
+                            <div class="nav-collapse">
+            
+            <ul class="nav pull-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Methods<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    
+                    <li><a href="./coddoc.html#.addCodeHandler">
+                                
+                                <span class="label label-info">S</span>
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                        addCodeHandler
+                     </a></li>
+                    
+                    <li><a href="./coddoc.html#.addTagHandler">
+                                
+                                <span class="label label-info">S</span>
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-success">P</span>
+                                        
+                                
+                        addTagHandler
+                     </a></li>
+                    
+                    <li><a href="./coddoc.html#.getTagRegexp">
+                                
+                                <span class="label label-info">S</span>
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-warning">P</span>
+                                        
+                                
+                        getTagRegexp
+                     </a></li>
+                    
+                    <li><a href="./coddoc.html#.parse">
+                                
+                                <span class="label label-info">S</span>
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-warning">P</span>
+                                        
+                                
+                        parse
+                     </a></li>
+                    
+                    <li><a href="./coddoc.html#.parseCode">
+                                
+                                <span class="label label-info">S</span>
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-warning">P</span>
+                                        
+                                
+                        parseCode
+                     </a></li>
+                    
+                    <li><a href="./coddoc.html#.parseTag">
+                                
+                                <span class="label label-info">S</span>
+                                
+                                
+                                <span class="label label-label">F</span>
+                                
+                                
+                                        
+                                 <span class="label label-warning">P</span>
+                                        
+                                
+                        parseTag
+                     </a></li>
+                    
+                </ul>
+            </li>
+            </ul>
+            
+            </div>
+            </div>
+     </div>
+</div>
+<em>Defined index.js</em>
+
+<p>
+Entry point for parsing code.</p>
+
+    <em>Example</em>
+        <pre class="prettyprint linenums lang-js">
+var tree = coddoc({directory : path.resolve(__dirname + &quot;lib&quot;)});
+
+//To use markdown formatter
+var doc = coddoc({directory : path.resolve(__dirname + &quot;lib&quot;), formatter : coddoc.formatters.markdown});
+
+//To use html formatter
+var doc = coddoc({directory : path.resolve(__dirname + &quot;lib&quot;), formatter : coddoc.formatters.html});
+
+//To use custom file pattern
+var doc = coddoc({directory : path.resolve(__dirname + &quot;lib&quot;), patter : /.+\.test\.js$/i, formatter : coddoc.html});
+        </pre>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>options</em>  : options object.</li>
+    
+        <li> <em>options.dir</em> <code>String</code> : the directory of code to parse.</li>
+    
+        <li> <em>[options.pattern= <code>/.+\.js$/i</code>]</em> <code>RegExp</code> : a regular expression to test files agains</li>
+    
+        <li> <em>options.formatter?</em> <code>Object</code> : And optional formatter to format the tree. The object must contain
+a <code>generate</code> method. See <a href='./coddoc_formatters.html#.html'> coddoc.formatters.html</a></li>
+    
+     </ul>
+
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (options){
+   options = options || {};
+   var baseDir = options.dir, filePattern = options.pattern || FILE_PATTERN;
+   if (!baseDir) {
+       console.log(&quot;directory required&quot;);
+   }
+   var fileMap = {};
+   (function findFiles(dir) {
+       var files = fs.readdirSync(dir);
+       files.forEach(function (file) {
+           var filePath = path.resolve(dir, file);
+           var stat = fs.statSync(filePath);
+           if (stat.isDirectory()) {
+               findFiles(filePath);
+           } else if (stat.isFile() &amp;&amp; filePattern.test(file)) {
+               fileMap[filePath] = fs.readFileSync(filePath, &quot;utf8&quot;);
+           }
+       });
+   }(baseDir));
+   var context = new Context(), tree = new Tree();
+   Object.keys(fileMap).forEach(function (i, j) {
+       emitter.emit(&quot;file&quot;, i);
+       context.activateScope(&quot;global&quot;);
+       parser.parse(fileMap[i], path.relative(baseDir, i), tree, context, emitter);
+   });
+   return tree;
+       
+}
+    </pre>
+    
+
+    
+    
+        <a name=".addCodeHandler"></a>
+    <h3>
+        addCodeHandler
+        
+        <span class="label label-info">Static</span>
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined parser/code.js</em>
+
+<p>
+Adds a handler for a particular code regular expression. Useful if you want to
+match a specific type of code not handled by default. When inside of of the parse function
+you can use the <code>RegExp.$</code> properties to access match sub expressions.
+
+By Default code blocks of the following form are parsed.
+
+<pre>
+// /^function (\w+) *\{/
+function(){}
+
+// /^var *(\w+) *= *function/
+var x = function(){};
+
+// /^(\w+(?:\.\w+)*)\.prototype\.(\w+(?:\.\w+)?) *= *function/
+MyObject.prototype.testFunction = function(){};
+
+// /^(\w+(?:\.\w+)*)\.prototype\.(\w+(?:\.\w+)?) *= *([^\n;]+)/
+MyObject.prototype.testProperty = "property";
+
+// /^(\w+(?:\.\w+)+) *= *function/
+some.object.testFunction = function(){}
+
+// /^(\w+(?:\.\w+)+) *= *([^\n;]+)/
+some.object.testFunction = ["some", "property"];
+
+// /^var +(\w+) *= *([^\n;]+)/
+var testProperty = {my : "property"};
+
+var myObject = {
+   // /^\"?(\w+)\"? *\: *function/
+   testFunction : function(){},
+
+   // /^\"?(\w+)\"? *\: *([^,\n]+)/
+   testProperty : "some property"
+}
+</pre>
+
+</p>
+
+    <em>Example</em>
+        <pre class="prettyprint linenums lang-js">
+var util = require(&quot;coddoc&quot;).util;
+//parse code in the format of var myLocal = name.space.myFunction = function(){};
+//give it a high priority to allow it to override current handlers.
+addHandler(/^var *\w+ *= * (\w+(?:\.\w+)*) = *function/, 20, function (str, symbol, context) {
+     var splitName = util.splitName(RegExp.$1), name = splitName.name, activeScope = splitName.memberof, params = util.getParamList(str);
+     return {
+         type:&#x27;function&#x27;,
+         isFunction:true,
+         memberof:activeScope,
+         isStatic:activeScope ? !activeScope.match(&quot;.prototype&quot;) : false,
+         isPrivate:name.match(/^_/) != null,
+         name:name,
+         params:params,
+         code:[&#x27;function (&#x27;, params.map(
+             function (n) {
+                 return n.name.name;
+             }).join(&quot;,&quot;), &#x27;){\n   &#x27;, util.getCode(str, &quot;{&quot;).split(&quot;\n&quot;).join(&quot;\n   &quot;), &quot;\n}&quot;].join(&quot;&quot;)
+    };
+});
+        </pre>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>regexp</em>  : the regular expression used to match code blocks.</li>
+    
+        <li> <em>[priority= <code>0</code>]</em>  : the priority to give this code handler if not provided
+it is defaulted to 0.</li>
+    
+        <li> <em>parse</em>  : a function that returns an object. The object will be set as the <code>codeObject</code> on the <a href='./coddoc_Symbol.html#'> coddoc.Symbol</a>. The properties of the object will be added to the <a href='./coddoc_Symbol.html#'> coddoc.Symbol</a> for processing later.</li>
+    
+     </ul>
+
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (regexp,priority,parse){
+   if (util.isFunction(priority)) {
+       parse = priority;
+       priority = 0;
+   }
+   handlers.push({
+       priority:priority,
+       match:function (str) {
+           return regexp.exec(str);
+       },
+       parse:parse
+   });
+   handlers.sort(sortHandlers);
+       
+}
+    </pre>
+    
+
+
+    
+        <a name=".addTagHandler"></a>
+    <h3>
+        addTagHandler
+        
+        <span class="label label-info">Static</span>
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-success">Public</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined parser/tags.js</em>
+
+<p>
+Adds a new tag to be parsed. You can use this to add custom tags. <a href='./coddoc.html#'> coddoc</a> will
+not do anything with the new tag by default, however you can add functionality to handle the
+new tag in the template.
+
+</p>
+
+    <em>Example</em>
+        <pre class="prettyprint linenums lang-js">
+//if a tag is contains a &#x27;|&#x27; character then each variation will resolve the the same parser function.
+coddoc.addTagHandler(&quot;void|VOID|Void&quot;, function(comment, symbol, context){
+   //do something with the tag or add properties to the symbol.
+   symbol.isVoid = true;
+   symbol.tags.push({tag : &quot;void&quot;, props : {}});
+});
+//in the template you can add functionality to handle the new tag. For example:
+//in the html symbol.tmpl you could add a new label to the name header
+&lt;h3&gt;
+{{name}}
+{{#if isStatic}}
+&lt;span class=&quot;label label-info&quot;&gt;Static&lt;/span&gt;
+{{/if}}
+{{#if isFunction}}
+&lt;span class=&quot;label label-label&quot;&gt;Function&lt;/span&gt;
+{{/if}}
+{{#if isPrivate}}
+&lt;span class=&quot;label label-important&quot;&gt;Private&lt;/span&gt;
+{{else}}
+     {{#if isProtected}}
+&lt;span class=&quot;label label-warning&quot;&gt;Protected&lt;/span&gt;
+     {{else}}
+&lt;span class=&quot;label label-success&quot;&gt;Public&lt;/span&gt;
+     {{/if}}
+{{/if}}
+{{#if isVoid}}
+&lt;span class=&quot;label label-label&quot;&gt;Void&lt;/span&gt;
+{{/if}}
+&lt;/h3&gt;
+        </pre>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>tag</em>  : the tag to parse, if a tag is contains a '|' character then the string will be split and each variation will resolve to the same parse function. If the tag already exists then the old implementation will be replaced by the new one.</li>
+    
+        <li> <em>parse</em>  : a parser function to invoke when a tag that matches the name is encountered.</li>
+    
+     </ul>
+
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (tag,parse){
+   tag.split(&quot;|&quot;).forEach(function (tag) {
+       tags[tag] = {
+           parse:parse || function () {
+               return {tag:tag, props:{}};
+           }};
+   });
+       
+}
+    </pre>
+    
+
+
+    
+        <a name=".getTagRegexp"></a>
+    <h3>
+        getTagRegexp
+        
+        <span class="label label-info">Static</span>
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-warning">Protected</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined parser/tags.js</em>
+
+<p>
+Returns a regular expression that can be used to parse tags
+
+</p>
+
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>RegExp</code> a regular expression to parse valid tags.</li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (){
+   return new RegExp(&quot;@(&quot; + Object.keys(tags).join(&quot;|&quot;) + &quot;)&quot;);
+       
+}
+    </pre>
+    
+
+
+    
+        <a name=".parse"></a>
+    <h3>
+        parse
+        
+        <span class="label label-info">Static</span>
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-warning">Protected</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined parser/index.js</em>
+
+<p>
+Parses a string of code into <a href='./coddoc_Symbol.html#'> coddoc.Symbol</a>s. All processed symbols are added to the <a href='./coddoc_Tree.html#'> coddoc.Tree</a>.
+This method is not intended to be used directly by user code.
+
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>str</em>  : the source code to parse</li>
+    
+        <li> <em>filepath</em>  : the relative filepath where the source is located. This is set on the symbol during parsing.</li>
+    
+        <li> <em>tree</em>  : the tree which contains all symbols.</li>
+    
+        <li> <em>context</em>  : the context which holds information about the current parsing job.</li>
+    
+        <li> <em>emitter</em>  : </li>
+    
+     </ul>
+
+
+    <em>Returns</em>
+    <ul>
+    
+        <li> <code>Object</code> </li>
+    
+    </ul>
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (str,filepath,tree,context,emitter){
+   var l = str.length;
+   var symbols = [];
+   for (var i = 0; i &lt; l; i++) {
+       var tags = [];
+       var comment = &quot;&quot;, c = str[i], startIndex = i, endIndex, ret = [];
+       var startCIndex = str.indexOf(&quot;/**&quot;, i);
+       if (startCIndex !== -1) {
+           i = startCIndex + 2;
+           var endCIndex = str.indexOf(&quot;*/&quot;, i);
+           if (endCIndex !== -1) {
+               comment = str.substr(startCIndex + 2, endCIndex - (startCIndex + 2)).split(&quot;\n&quot;).map(joinAndReplace).join(&quot;\n&quot;);
+               emitter.emit(&quot;comment&quot;, comment);
+               i = endCIndex + 1;
+               //console.log(str.substr(startCIndex, endCIndex - startCIndex));
+               //console.log(comment);
+               var res = parseTags({comment:comment, start:startCIndex, end:endCIndex + 2}, str, filepath, context),
+                   sym = res.symbol;
+               symbols.push(sym);
+               emitter.emit(&quot;symbol&quot;, sym);
+               var memberof = sym.memberof;
+               if (!sym.ignore &amp;&amp; !sym.lends) {
+                   tree.addSymbol(sym);
+               }
+           }
+       } else {
+           i++;
+       }
+   }
+   return {symbols:symbols, code:str};
+       
+}
+    </pre>
+    
+
+
+    
+        <a name=".parseCode"></a>
+    <h3>
+        parseCode
+        
+        <span class="label label-info">Static</span>
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-warning">Protected</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined parser/code.js</em>
+
+<p>
+Uses Registered handlers to parse the next block of code from a code fragment. This function is
+used by <a href='./coddoc.html#.parse'> coddoc.parse</a> to parse code for comments.
+
+</p>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>str</em>  : the source string to parse</li>
+    
+        <li> <em>symbol</em>  : the symbol to add parsed properties from.</li>
+    
+        <li> <em>context</em>  : the current context</li>
+    
+     </ul>
+
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (str,symbol,context){
+   var l = handlers.length, ret = {};
+   for (var i = 0; i &lt; l; i++) {
+       var h = handlers[i];
+       if (h.match(str)) {
+           ret = h.parse(str, symbol, context);
+           break;
+       }
+   }
+   if (ret) {
+       symbol.codeObject = ret;
+       Object.keys(ret).forEach(function (i) {
+           symbol[i] = ret[i];
+       });
+   }
+       
+}
+    </pre>
+    
+
+
+    
+        <a name=".parseTag"></a>
+    <h3>
+        parseTag
+        
+        <span class="label label-info">Static</span>
+        
+        
+        <span class="label label-label">Function</span>
+        
+        
+                
+         <span class="label label-warning">Protected</span>
+                
+        
+   </h3>
+
+<hr/>
+<em>Defined parser/tags.js</em>
+
+<p>
+Parses a tag and the coresponding comment using a matching tag handler. Each parsed tag
+could add a new property to the <a href='./coddoc_Symbol.html#'> coddoc.Symbol</a>. The parsed tag will be added the the
+<a href='./coddoc_Symbol.html#tags'> coddoc.Symbol#tags</a> array.
+
+</p>
+
+    <em>Example</em>
+        <pre class="prettyprint linenums lang-js">
+coddoc.parseTag(&quot;someTag&quot;, &quot;@someTag props...&quot;, sym, src, index, context);
+//would add a new tag to the symbols property
+{
+     tag : &quot;tagname&quot;,
+     props : {...}
+}
+
+//the props value would also be added to the symbols params array.
+        </pre>
+
+
+    <em>Arguments</em>
+    <ul>
+    
+        <li> <em>comment</em>  : the comment fragment being parsed</li>
+    
+        <li> <em>sym</em>  : the symbol that the comment corresponds to. The code object and values will have already been set.</li>
+    
+        <li> <em>context</em>  : the currect context object. The context allows tags to set new scopes and namespaces.</li>
+    
+        <li> <em>tag</em> <code>String</code> : the tag name being parsed from the comment</li>
+    
+     </ul>
+
+
+
+
+    
+    <em>Source</em>
+    <pre class="prettyprint linenums lang-js">
+function (comment,sym,context){
+   var tag = comment.match(TAG_REGEXP), ret = {};
+   if (tag &amp;&amp; tag.length === 2) {
+       var t = tags[tag[1]];
+       if (t) {
+           t.parse(comment, sym, context);
+       } else {
+           throw new Error(&quot;Invalid tag &quot; + tag);
+       }
+   }
+       
+}
+    </pre>
+    
+
+
+    
+<hr>
+
+    
+  <h2>License</h2>
+
+<p>MIT <a href = https://github.com/Pollenware/coddoc/raw/master/LICENSE>LICENSE</a><p>
+
+<h2>Meta</h2>
+<hr>
+<p>Code: <code>git clone git://github.com/pollenware/coddoc.git</code></br></p>
+
+
+
+</div>
+</div>
+<script type="text/javascript" src="./assets/js/jquery.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-transition.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-dropdown.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-tab.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-tooltip.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-popover.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-button.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-collapse.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-carousel.js"></script>
+<script type="text/javascript"
+        src="./assets/js/google-code-prettify/prettify.js"></script>
+
+</body>
+</html>
+
