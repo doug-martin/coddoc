@@ -48,7 +48,19 @@
     Coddoc also has a few additional tags.
     <ul>
          <li>ignoreCode : ignore the parsed code in the output</li>
+         <li>includeDoc : include an external doc. External docs can be html or markdown.
+         Example ```javascript
+ &#64;includeDoc [Title Of Doc] ../location/of_doc.md
+```
+         </li>
          <li>projectName : document the projectName</li>
+         <li>github : url to github project</li>
+         <li>code : specifies a code block without needing an <code>example</code> tag
+         Example ```javascript
+ &#123;&#64;code var test = "test"; &#125;
+```
+         </li>
+
          <li>header : allows you to document a header that should appear before
          generated documentation</li>
          <li>footer : allows you to document a footer that should come after the generated documentation</li>
