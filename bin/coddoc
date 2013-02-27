@@ -1,60 +1,62 @@
 #!/usr/bin/env node
 
-(function () {
-    "use strict";
-    var fs = require("fs"),
-        path = require("path"),
-        util = require("util"),
-        downdoc = require("../index.js"),
-        program = require('commander');
+
+"use strict";
+var fs = require("fs"),
+    path = require("path"),
+    util = require("util"),
+    coddoc = require("../index.js"),
+    program = require('commander');
 
 
-    program
-        .version('0.0.1')
-        .option('--dir <path>', 'Directory to put output in if formatter accepts it')
-        .option('-d, --directory <path>', 'Directory of js files')
-        .option('-f, --formatter <path>', 'Use built in formatter')
-        .option('-p, --pattern <string>', 'file pattern to use')
-        .on("formatters", function () {
-            console.log(["", "Reporters:", "\tmarkdown", "\thtml", "\tmulti-html", ""].join("\n"));
-            process.exit();
-        })
-        .parse(process.argv);
-
-    var directory = program.directory, formatter = program.formatter || null, pattern = program.pattern;
-
-    if (pattern) {
-        pattern = new RegExp(pattern);
-    }
-
-    if (!directory) {
-        process.stdout.write("Directory required\n");
-        process.stdout.write(program.helpInformation());
+program
+    .version('0.0.1')
+    .option('--dir <path>', 'Directory to put output in if formatter accepts it')
+    .option('-d, --directory <path>', 'Directory of js files')
+    .option('-f, --formatter <path>', 'Use built in formatter')
+    .option('-p, --pattern <string>', 'file pattern to use')
+    .on("formatters", function () {
+        console.log(["", "Reporters:", "\tmarkdown", "\thtml", "\tmulti-html", ""].join("\n"));
         process.exit();
-    } else {
+    })
+    .parse(process.argv);
+
+var directory = program.directory, files = program.args, formatter = program.formatter || null, pattern = program.pattern;
+
+if (pattern) {
+    pattern = new RegExp(pattern);
+}
+
+if (directory || files) {
+    if (!directory) {
         directory = path.resolve(process.cwd(), directory);
     }
+} else {
+    process.stdout.write("Directory required\n");
+    process.stdout.write(program.helpInformation());
+    process.exit();
+}
 
+if (formatter) {
+    var ciFormatter = formatter.toLowerCase().trim();
+    if ("markdown" === ciFormatter || "html" === ciFormatter || "multi-html" === ciFormatter) {
+        formatter = require("../templates/" + ciFormatter);
+    } else {
+        formatter = require(path.resolve(process.cwd(), program.formatter));
+    }
+}
+var tree = coddoc({dir: directory, formatter: formatter, pattern: pattern, files: files.length === 0 ? null : files});
+if (tree) {
     if (formatter) {
-        var ciFormatter = formatter.toLowerCase().trim();
-        if ("markdown" === ciFormatter || "html" === ciFormatter || "multi-html" === ciFormatter) {
-            formatter = require("../templates/" + ciFormatter);
-        } else {
-            formatter = require(path.resolve(process.cwd(), program.formatter));
-        }
-    }
-    var tree = downdoc({dir:directory, formatter:formatter, pattern:pattern});
-    if (tree) {
-        if (formatter) {
-            if (formatter && formatter.generate) {
-                var result = formatter.generate(tree, program);
-                if(result){
-                    console.log(result);
-                }
+        if (formatter && formatter.generate) {
+            var result = formatter.generate(tree, program);
+            if (result) {
+                console.log(result);
             }
-        } else {
-            console.log(JSON.stringify(tree, null, 2));
         }
-
+    } else {
+        console.log(JSON.stringify(tree, null, 2));
     }
-}());
+
+}
+

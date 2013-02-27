@@ -2,7 +2,7 @@
     <a name="{{escapeLink class.name}}"></a>
     {{{import "./class-nav"}}}
 
-    <p>{{{replaceLinks class.description}}}</p>
+    <p>{{{replaceLinksAndParse class.description}}}</p>
     {{#each class.examples}}
         <em>Example</em>
             <pre class="prettyprint linenums lang-js">
@@ -38,7 +38,7 @@
         <em>Arguments</em>
         <ul>
         {{#each params}}
-            <li> <em>{{{formatParamName class.name}}}</em> {{#if class.types}}{{{joinTypes class.types}}}{{/if}} : {{{replaceLinks class.description}}}</li>
+            <li> <em>{{{formatParamName class.name}}}</em> {{#if class.types}}{{{joinTypes class.types}}}{{/if}} : {{{replaceLinksAndParse class.description}}}</li>
         {{/each}}
         </ul>
      {{/if}}
@@ -46,7 +46,7 @@
         <em>Throws</em>
         <ul>
             {{#each class.throws}}
-                <li>{{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinks description}}}</li>
+                <li>{{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinksAndParse description}}}</li>
             {{/each}}
         </ul>
     {{/if}}

@@ -5,6 +5,7 @@
         exec = require("child_process").exec,
         fs = require("fs"),
         marked = require("marked"),
+        wrench = require("wrench"),
         path = require("path");
 
     var template = __dirname;
@@ -95,12 +96,22 @@
         return str;
     };
 
-
     var replaceLinks = function (text) {
         return replaceCode(text ? replaceToken(text, "link", function (link) {
             link = link.replace(/^\{@link|\}$/g, "");
             return ["<a href='", ["./" + getSymbolName(link).trim() + ".html", getAccessorName(link)].join("#"), "'>", link, "</a>"].join("");
         }) : "");
+    };
+
+    var replaceLinksAndParse = function (text) {
+        return parseMarkdown(replaceCode(text ? replaceToken(text, "link", function (link) {
+            link = link.replace(/^\{@link|\}$/g, "");
+            return ["<a href='", ["./" + getSymbolName(link).trim() + ".html", getAccessorName(link)].join("#"), "'>", link, "</a>"].join("");
+        }) : ""));
+    };
+
+    var parseMarkdown = function (text) {
+        return marked(text).replace(/\<pre\>/ig, "<pre class='prettyprint linenums lang-js'>");
     };
 
 
@@ -133,7 +144,7 @@
                 var name = p.isStatic ? "<em>" + nameValue + "</em>" : nameValue;
                 var value = replaceLinks(p.code || p.defaultValue || "");
                 var type = p.type || "";
-                var description = replaceLinks(p.description) || "";
+                var description = replaceLinksAndParse(p.description) || "";
 
                 ret += ["<tr><td>", name , "</td><td>", type, "</td><td>", value ? "<code>" + value + "</code>" : "", "</td><td>", description, "</td><tr>"].join("");
             });
@@ -145,21 +156,23 @@
     var importFile = (function () {
         var compiledImports = {};
         return function (file, context, b) {
-            var fileContent;
+            context = context || {};
+            var fileContent, compile = util.isBoolean(context.compile) ? context.compile : true;
             if (!file.match(/\.(tmpl|md|html|css|js)$/)) {
                 file += ".tmpl";
             } else if (path.extname(file) === ".md") {
-                fileContent = '{{{import "./header.html"}}}\n' + marked(fs.readFileSync(file, "utf8")).replace(/\<pre\>/ig, "<pre class='prettyprint linenums lang-js'>") + '\n{{{import "./footer.html"}}}';
+                fileContent = '{{{import "./header.html"}}}\n' + parseMarkdown(fs.readFileSync(file, "utf8")) + '\n{{{import "./footer.html"}}}';
             }
             try {
-
                 var filePath = path.resolve(template, file);
                 var tmpl = compiledImports[filePath];
                 if (!tmpl) {
                     if (!fileContent) {
                         fileContent = fs.readFileSync(filePath, "utf8");
                     }
-                    tmpl = compiledImports[filePath] = Handlebars.compile(fileContent);
+                    tmpl = compiledImports[filePath] = compile ? Handlebars.compile(fileContent) : function () {
+                        return fileContent;
+                    };
                 }
                 return tmpl(this);
             } catch (e) {
@@ -185,14 +198,32 @@
     Handlebars.registerHelper("propertyTable", propertyTable);
     Handlebars.registerHelper("import", importFile);
     Handlebars.registerHelper("resolveInclude", resolveInclude);
+    Handlebars.registerHelper("replaceLinksAndParse", replaceLinksAndParse);
 
     var objComp = function (n1, n2) {
         return n1.name === n2.name ? 0 : n1.name < n2.name ? -1 : 1;
     };
 
+    function resolveLocations(headers, dir, tag) {
+        return headers.map(function (symbol) {
+            var header = symbol[tag];
+            if (header.location) {
+                var baseDir = dir ? path.dirname(path.resolve(dir, header.file)) : path.dirname(header.file)
+                header = fs.readFileSync(path.resolve(baseDir, header.location), "utf8");
+            } else {
+                header = header.content;
+            }
+            symbol[tag] = header;
+            return symbol;
+        });
+    }
+
     exports.generate = function (tree, options) {
         var nameSpaces = tree.getNamespaces().sort(objComp);
         var dir = path.resolve(process.cwd(), options.dir || "docs");
+        if (!fs.existsSync(dir)) {
+            wrench.mkdirSyncRecursive(dir, "0777");
+        }
         nameSpaces.forEach(function (n) {
             n.methods.sort(objComp);
             n.properties.sort(objComp);
@@ -208,28 +239,21 @@
 
         var includedDocs = tree.getIncludedDocs();
         includedDocs.forEach(function (id) {
-            id.location = path.resolve(options.directory, id.location);
-
+            var baseDir = dir ? path.dirname(path.resolve(dir, id.file)) : path.dirname(id.file)
+            id.location = path.resolve(baseDir, id.location);
         });
-        var base = {namespaces:nameSpaces, includeDocs:includedDocs, headers:tree.getHeaders(), footers:tree.getFooters(), projectName:tree.getProjectName(), github:tree.getGitHub(), classes:classes};
+        var base = {namespaces: nameSpaces, includeDocs: includedDocs, headers: resolveLocations(tree.getHeaders(), dir, "header"), footers: resolveLocations(tree.getFooters(), dir, "footer"), projectName: tree.getProjectName(), github: tree.getGitHub(), classes: classes};
         fs.writeFileSync(path.resolve(dir, "index.html"), compileIndexTmpl(base));
         nameSpaces.forEach(function (namespace) {
-            fs.writeFileSync(path.resolve(dir, normalize(namespace.name) + ".html"), compileNamespacesTmpl(util.merge({namespace:namespace}, base)));
+            fs.writeFileSync(path.resolve(dir, normalize(namespace.name) + ".html"), compileNamespacesTmpl(util.merge({namespace: namespace}, base)));
         });
         classes.forEach(function (clazz) {
-            fs.writeFileSync(path.resolve(dir, normalize(clazz.name) + ".html"), compileClassesTmpl(util.merge({"class":clazz}, base)));
+            fs.writeFileSync(path.resolve(dir, normalize(clazz.name) + ".html"), compileClassesTmpl(util.merge({"class": clazz}, base)));
         });
         includedDocs.forEach(function (idFile) {
-            fs.writeFileSync(path.resolve(dir, resolveInclude(idFile.location).toString()), importFile.call(base, idFile.location));
+            fs.writeFileSync(path.resolve(dir, resolveInclude(idFile.location).toString()), importFile.call(base, idFile.location, idFile));
         });
-        console.log("cp -r " + __dirname + "/assets " + path.resolve(dir, "assets"));
-        exec("cp -r " + __dirname + "/assets " + path.resolve(dir, "./"), function (err) {
-            if (err) {
-                console.log(err.stack);
-            }
-
-        });
-
+        wrench.copyDirSyncRecursive(path.resolve(__dirname + "/assets"), path.resolve(dir, "assets"))
     };
 
 })();

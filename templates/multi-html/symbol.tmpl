@@ -21,7 +21,7 @@
 <hr/>
 <em>Defined {{file}}</em>
 
-<p>{{{replaceLinks description}}}</p>
+<p>{{{replaceLinksAndParse description}}}</p>
 {{#each examples}}
     <em>Example</em>
         <pre class="prettyprint linenums lang-js">
@@ -32,7 +32,7 @@
     <em>Arguments</em>
     <ul>
     {{#each params}}
-        <li> <em>{{{formatParamName name}}}</em> {{#if types}}{{{joinTypes types}}}{{/if}} : {{{replaceLinks description}}}</li>
+        <li> <em>{{{formatParamName name}}}</em> {{#if types}}{{{joinTypes types}}}{{/if}} : {{{replaceLinksAndParse description}}}</li>
     {{/each}}
      </ul>
 {{/if}}
@@ -40,7 +40,7 @@
     <em>Returns</em>
     <ul>
     {{#each returns}}
-        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinks description}}}</li>
+        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinksAndParse description}}}</li>
     {{/each}}
     </ul>
 {{/if}}
@@ -48,7 +48,7 @@
     <em>Throws</em>
     <ul>
     {{#each throws}}
-        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinks description}}}</li>
+        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinksAndParse description}}}</li>
     {{/each}}
     </ul>
 {{/if}}

@@ -3,7 +3,7 @@
     {{{import "./namespace-nav"}}}
 <em>Defined {{namespace.file}}</em>
 
-<p>{{{replaceLinks namespace.description}}}</p>
+<p>{{{replaceLinksAndParse namespace.description}}}</p>
 {{#each namespace.examples}}
     <em>Example</em>
         <pre class="prettyprint linenums lang-js">
@@ -14,7 +14,7 @@
     <em>Arguments</em>
     <ul>
     {{#each namespace.params}}
-        <li> <em>{{{formatParamName name}}}</em> {{#if types}}{{{joinTypes types}}}{{/if}} : {{{replaceLinks description}}}</li>
+        <li> <em>{{{formatParamName name}}}</em> {{#if types}}{{{joinTypes types}}}{{/if}} : {{{replaceLinksAndParse description}}}</li>
     {{/each}}
      </ul>
 {{/if}}
@@ -22,7 +22,7 @@
     <em>Returns</em>
     <ul>
     {{#each namespace.returns}}
-        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinks description}}}</li>
+        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinksAndParse description}}}</li>
     {{/each}}
     </ul>
 {{/if}}
@@ -30,7 +30,7 @@
     <em>Throws</em>
     <ul>
     {{#each namespace.throws}}
-        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinks description}}}</li>
+        <li> {{#if types}}{{{joinTypes types}}}{{/if}} {{{replaceLinksAndParse description}}}</li>
     {{/each}}
     </ul>
 {{/if}}

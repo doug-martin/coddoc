@@ -1,30 +1,38 @@
 {
-    "name":"coddoc",
-    "description":"Documentation generator",
-    "version":"0.0.1",
-    "keywords":["JSDOC", "Documentation", "docs", "doc", "markdown"],
-    "repository":{
-        "type":"git",
-        "url":"git@github.com:doug-martin/coddoc.git"
-    },
-    "homepage":"http://doug-martin.github.com/coddoc",
-    "author":"Doug Martin (http://blog.dougamartin.com)",
-    "main":"index.js",
-    "dependencies":{
-        "handlebars":">=1.0.5beta",
-        "commander":">=0.5.1"
-    },
-    "devDependencies":{
-        "it":">=0.0.2"
-    },
-    "bin":{
-        "coddoc":"./bin/coddoc"
-    },
-    "directories":{
-        "lib":"lib",
-        "templates":"templates"
-    },
-    "engines":{
-        "node":">= 0.6.1"
-    }
+  "name": "coddoc",
+  "description": "Documentation generator",
+  "version": "0.0.333",
+  "keywords": [
+    "JSDOC",
+    "Documentation",
+    "docs",
+    "doc",
+    "markdown"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:doug-martin/coddoc.git"
+  },
+  "homepage": "http://doug-martin.github.com/coddoc",
+  "author": "Doug Martin (http://blog.dougamartin.com)",
+  "main": "index.js",
+  "dependencies": {
+    "commander": ">=0.5.1",
+    "marked": "~0.2.8",
+    "handlebars": "~1.0.10",
+    "wrench": "~1.4.4"
+  },
+  "devDependencies": {
+    "it": ">=0.0.2"
+  },
+  "bin": {
+    "coddoc": "./bin/coddoc"
+  },
+  "directories": {
+    "lib": "lib",
+    "templates": "templates"
+  },
+  "engines": {
+    "node": ">= 0.6.1"
+  }
 }
