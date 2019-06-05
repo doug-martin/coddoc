@@ -1,3 +1,7 @@
+# Deprecated
+
+This repo is no longer maintained as jsdoc has implemented most of the features please use [jsdoc](https://github.com/jsdoc/jsdoc) instead
+
 <a name="top"></a>
 
 
